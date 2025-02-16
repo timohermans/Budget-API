@@ -1,0 +1,27 @@
+@Budget_Api_HostAddress = https://localhost:7070
+@keycloak_url = https://auth.timo-hermans.nl
+@realm = home
+@client_id = budget_api
+@client_secret = BclXqFoEoaIcfqHkIVeYWCJCxMWP9pH7
+
+
+### Get Access Token
+# @name login
+POST {{keycloak_url}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}
+&client_secret={{client_secret}}
+&grant_type=client_credentials
+
+###
+
+GET {{Budget_Api_HostAddress}}/weatherforecast/
+Accept: application/json
+Authorization: Bearer {{login.response.body.access_token}}
+
+###
+
+POST {{Budget_Api_HostAddress}}/transactions/upload
+Accept: application/json
+Authorization: Bearer {{login.response.body.access_token}}
