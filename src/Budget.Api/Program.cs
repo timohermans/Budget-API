@@ -3,7 +3,6 @@ using Budget.Application;
 using Budget.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
 
 builder.AddBudgetApi();
 builder.AddBudgetApplication();

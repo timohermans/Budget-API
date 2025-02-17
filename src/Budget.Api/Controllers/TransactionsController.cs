@@ -11,7 +11,7 @@ public class TransactionsController(TransactionsFileJobStartUseCase useCase) : C
 {
     [HttpPost("upload")]
     [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] // 10MB limit
-    public async Task<IActionResult> Upload([FromForm]IFormFile? file)
+    public async Task<IActionResult> Upload([FromForm] IFormFile? file)
     {
         if (file == null || file.Length == 0)
         {
@@ -20,10 +20,13 @@ public class TransactionsController(TransactionsFileJobStartUseCase useCase) : C
 
         var command = new TransactionsFileJobStartUseCase.Command
         {
-            Size = file.Length,
-            FileName = file.FileName,
-            ContentType = file.ContentType,
-            Content = GetFileBytesFrom(file)
+            File = new TransactionsFileJobStartUseCase.FileModel
+            {
+                Size = file.Length,
+                FileName = file.FileName,
+                ContentType = file.ContentType,
+                Content = GetFileBytesFrom(file)
+            }
         };
 
         var result = await useCase.HandleAsync(command);
@@ -32,7 +35,7 @@ public class TransactionsController(TransactionsFileJobStartUseCase useCase) : C
         {
             return BadRequest(result.Error);
         }
-        
+
         return Ok(result);
     }
 

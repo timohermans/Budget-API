@@ -8,5 +8,5 @@ public interface IBudgetContext
 {
     public DbSet<Transaction> Transactions { get; }
     public DbSet<TransactionsFileJob> TransactionsFileJobs { get; }
-    Task SaveChangesAsync();
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
