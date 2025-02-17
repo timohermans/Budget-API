@@ -1,12 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Api", "Budget.Api\Budget.Api.csproj", "{74D5040C-C06E-42BD-BD38-BCE5D9970118}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Api", ".\src\Budget.Api\Budget.Api.csproj", "{74D5040C-C06E-42BD-BD38-BCE5D9970118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Application", "Budget.Application\Budget.Application.csproj", "{AB9E640C-7752-4198-AB54-2C545D44D439}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Application", ".\src\Budget.Application\Budget.Application.csproj", "{AB9E640C-7752-4198-AB54-2C545D44D439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Domain", "Budget.Domain\Budget.Domain.csproj", "{B6473E7E-83DC-4ADA-8AE4-B57B954F0641}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Domain", ".\src\Budget.Domain\Budget.Domain.csproj", "{B6473E7E-83DC-4ADA-8AE4-B57B954F0641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Infrastructure", "Budget.Infrastructure\Budget.Infrastructure.csproj", "{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Infrastructure", ".\src\Budget.Infrastructure\Budget.Infrastructure.csproj", "{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

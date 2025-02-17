@@ -3,13 +3,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Budget.Api;
 
-public static class ServiceCollectionExtensions
+public static class StartupExtensions
 {
-    public static void AddBudgetApi(this IServiceCollection services, IConfiguration configuration)
+    public static void AddBudgetApi(this IHostApplicationBuilder builder)
     {
+        var services = builder.Services;
+        var config = builder.Configuration;
+
         services.AddControllers();
         services.AddOpenApi(); // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        services.AddBudgetAuthentication(configuration);
+        services.AddBudgetAuthentication(config);
     }
 
     private static void AddBudgetAuthentication(this IServiceCollection services, IConfiguration configuration)

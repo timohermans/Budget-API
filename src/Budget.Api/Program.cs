@@ -1,11 +1,13 @@
 using Budget.Api;
 using Budget.Application;
+using Budget.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services.AddBudgetApi(config);
-builder.Services.AddBudgetApplication(config);
+builder.AddBudgetApi();
+builder.AddBudgetApplication();
+builder.AddInfrastructure();
 
 var app = builder.Build();
 
