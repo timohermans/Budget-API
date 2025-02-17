@@ -1,5 +1,6 @@
 using Budget.Application;
 using Budget.Infrastructure.Database;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,20 @@ public static class StartupExtensions
         {
             options.UseNpgsql(config.GetConnectionString("Default"));
         });
-
         builder.Services.AddScoped<IBudgetContext, BudgetContext>();
+        
+        // builder.Services.AddMassTransit(x =>
+        // {
+        //     x.UsingRabbitMq((context,cfg) =>
+        //     {
+        //         cfg.Host("localhost", "/", h => {
+        //             h.Username("guest");
+        //             h.Password("guest");
+        //         });
+        //
+        //         cfg.ConfigureEndpoints(context);
+        //     });
+        // });
+        // builder.Services.AddHostedService<Worker>();
     }
 }
