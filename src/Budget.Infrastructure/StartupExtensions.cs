@@ -19,19 +19,20 @@ public static class StartupExtensions
             options.UseNpgsql(config.GetConnectionString("Default"));
         });
         builder.Services.AddScoped<IBudgetContext, BudgetContext>();
-        
-        // builder.Services.AddMassTransit(x =>
-        // {
-        //     x.UsingRabbitMq((context,cfg) =>
-        //     {
-        //         cfg.Host("localhost", "/", h => {
-        //             h.Username("guest");
-        //             h.Password("guest");
-        //         });
-        //
-        //         cfg.ConfigureEndpoints(context);
-        //     });
-        // });
+
+        builder.Services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(config.GetValue<string>("MessageBus:Host"), "/", h =>
+                {
+                    h.Username(config.GetValue<string>("MessageBus:Username") ?? "guest");
+                    h.Password(config.GetValue<string>("MessageBus:Password") ?? "guest");
+                });
+
+                cfg.ConfigureEndpoints(context);
+            });
+        });
         // builder.Services.AddHostedService<Worker>();
     }
 }
