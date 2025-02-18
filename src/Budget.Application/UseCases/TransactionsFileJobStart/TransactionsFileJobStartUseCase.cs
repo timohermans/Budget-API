@@ -1,12 +1,15 @@
 using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain;
+using Budget.Domain.Commands;
+using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Budget.Application.UseCases;
 
 public class TransactionsFileJobStartUseCase(
     IBudgetContext db,
+    IPublishEndpoint endpoint,
     ILogger<TransactionsFileJobStartUseCase> logger,
     FileStorageSettings fileSettings,
     TimeProvider timeProvider)
@@ -50,15 +53,18 @@ public class TransactionsFileJobStartUseCase(
 
         var job = new TransactionsFileJob
         {
+            Id = NewId.NextGuid(),
             CreatedAt = timeProvider.GetUtcNow().DateTime,
             StoredFilePath = fileStoreResult.Value,
-            OriginalFileName = command.File.FileName
+            OriginalFileName = command.File.FileName,
         };
         await db.TransactionsFileJobs.AddAsync(job);
         await db.SaveChangesAsync();
         
-        // TODO: MassTransit code here
-        
+        await endpoint.Publish<ProcessTransactionsFile>(new
+        {
+            JobId = job.Id
+        });
 
         return Result<Response>.Success(new Response());
     }

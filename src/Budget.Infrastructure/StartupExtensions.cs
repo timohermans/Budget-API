@@ -1,4 +1,5 @@
 using Budget.Application;
+using Budget.Application.MessageBus.Consumers;
 using Budget.Infrastructure.Database;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,8 @@ public static class StartupExtensions
 
         builder.Services.AddMassTransit(x =>
         {
+            x.AddConsumer<ProcessTransactionsFileConsumer>();
+            
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(config.GetValue<string>("MessageBus:Host"), "/", h =>
