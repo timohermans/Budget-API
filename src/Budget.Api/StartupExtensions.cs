@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace Budget.Api;
 
@@ -13,6 +14,13 @@ public static class StartupExtensions
         services.AddControllers();
         services.AddOpenApi(); // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddBudgetAuthentication(config);
+        services.AddSerilog((sp, lc) =>
+        {
+            lc.ReadFrom.Configuration(config)
+                .ReadFrom.Services(sp)
+                .Enrich.FromLogContext()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext}) {Message:lj}{NewLine}{Exception}");
+        });
     }
 
     private static void AddBudgetAuthentication(this IServiceCollection services, IConfiguration configuration)
