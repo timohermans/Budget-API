@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Domain", ".\src\Budg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Infrastructure", ".\src\Budget.Infrastructure\Budget.Infrastructure.csproj", "{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B44F0CD8-1D19-4899-BB4D-41B97C9D3497}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.IntegrationTests", ".\tests\Budget.IntegrationTests\Budget.IntegrationTests.csproj", "{B540D7E8-889B-4925-A64E-391956E675E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,12 @@ Global
 		{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B540D7E8-889B-4925-A64E-391956E675E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B540D7E8-889B-4925-A64E-391956E675E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B540D7E8-889B-4925-A64E-391956E675E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B540D7E8-889B-4925-A64E-391956E675E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B540D7E8-889B-4925-A64E-391956E675E9} = {B44F0CD8-1D19-4899-BB4D-41B97C9D3497}
 	EndGlobalSection
 EndGlobal
