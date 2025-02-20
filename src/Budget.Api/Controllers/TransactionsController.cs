@@ -10,7 +10,7 @@ namespace Budget.Api.Controllers;
 public class TransactionsController(TransactionsFileJobStartUseCase useCase) : ControllerBase
 {
     [HttpPost("upload")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] // 10MB limit
+    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] 
     public async Task<IActionResult> Upload([FromForm] IFormFile? file)
     {
         if (file == null || file.Length == 0)

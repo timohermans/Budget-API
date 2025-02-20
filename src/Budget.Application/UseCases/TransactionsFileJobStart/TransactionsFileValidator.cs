@@ -18,7 +18,7 @@ public class TransactionsFileValidator(FileStorageSettings settings, ILogger log
             var maxSizeInBytes = settings.MaxSizeMb * 1024 * 1024; // Default 10MB
             if (file.Size > maxSizeInBytes)
             {
-                return Result.Failure($"File size exceeds maximum allowed size of {maxSizeInBytes / 1024 / 1024}MB.");
+                return Result.Failure($"File size exceeds maximum allowed size of {settings.MaxSizeMb}MB.");
             }
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();

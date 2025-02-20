@@ -54,7 +54,7 @@ public class TransactionsFileJobStartUseCase(
         var job = new TransactionsFileJob
         {
             Id = NewId.NextGuid(),
-            CreatedAt = timeProvider.GetUtcNow().DateTime,
+            CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
             StoredFilePath = fileStoreResult.Value,
             OriginalFileName = command.File.FileName,
         };

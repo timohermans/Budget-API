@@ -1,4 +1,4 @@
-using EF.Testing.BusinessLogic;
+using Budget.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Budget.IntegrationTests;
@@ -8,14 +8,14 @@ namespace Budget.IntegrationTests;
 public class TestDatabaseFixture
 {
     private const string ConnectionString =
-        @"Server=(localdb)\mssqllocaldb;Database=EFTestSample;Trusted_Connection=True;ConnectRetryCount=0";
+        @"Host=localhost;Database=Budget_test;Username=postgres;Password=P@ssw0rd;Trust Server Certificate=true;";
 
-    private static readonly object _lock = new();
+    private static readonly Lock Lock = new();
     private static bool _databaseInitialized;
 
     public TestDatabaseFixture()
     {
-        lock (_lock)
+        lock (Lock)
         {
             if (!_databaseInitialized)
             {
@@ -24,10 +24,10 @@ public class TestDatabaseFixture
                     context.Database.EnsureDeleted();
                     context.Database.EnsureCreated();
 
-                    context.AddRange(
-                        new Blog { Name = "Blog1", Url = "http://blog1.com" },
-                        new Blog { Name = "Blog2", Url = "http://blog2.com" });
-                    context.SaveChanges();
+                    // context.AddRange(
+                    //     new Blog { Name = "Blog1", Url = "http://blog1.com" },
+                    //     new Blog { Name = "Blog2", Url = "http://blog2.com" });
+                    // context.SaveChanges();
                 }
 
                 _databaseInitialized = true;
@@ -35,11 +35,14 @@ public class TestDatabaseFixture
         }
     }
 
-    public BloggingContext CreateContext()
-        => new BloggingContext(
-            new DbContextOptionsBuilder<BloggingContext>()
-                .UseSqlServer(ConnectionString)
+    public BudgetContext CreateContext()
+    {
+        var db = new BudgetContext(
+            new DbContextOptionsBuilder<BudgetContext>()
+                .UseNpgsql(ConnectionString)
                 .Options);
+        return db;
+    }
 }
 
 #endregion
