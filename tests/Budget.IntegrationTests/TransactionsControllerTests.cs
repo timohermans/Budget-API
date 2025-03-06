@@ -4,6 +4,7 @@ using Budget.Application.Settings;
 using Budget.Application.UseCases;
 using Budget.Domain.Commands;
 using Budget.Domain.Enums;
+using Budget.Infrastructure.Database.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,8 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
         await db.Database.BeginTransactionAsync();
         var fileSettings = new FileStorageSettings { BasePath = "/Users/timohermans/Dev/tmp/dump", MaxSizeMb = 10 };
         var controller = new TransactionsController(
-            new TransactionsFileJobStartUseCase(db,
+            new TransactionsFileJobStartUseCase(
+                new TransactionsFileJobRepository(db),
                 publishEndpoint,
                 NullLogger<TransactionsFileJobStartUseCase>.Instance,
                 fileSettings,
@@ -44,10 +46,13 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
 
         Assert.Equal(typeof(OkObjectResult), result.GetType());
         Assert.NotNull(job);
-        await publishEndpoint.Received().Publish<ProcessTransactionsFile>(Arg.Any<object>(), Arg.Any<CancellationToken>()); // todo: check if I can get this to properly check args with fakeiteasy
+        await publishEndpoint.Received()
+            .Publish<
+                ProcessTransactionsFile>(Arg.Any<object>(),
+                Arg.Any<CancellationToken>()); // todo: check if I can get this to properly check args with fakeiteasy
         Assert.Null(job.ErrorMessage);
         Assert.Equal("transactions.csv", job.OriginalFileName);
-        Assert.True(File.Exists(Path.Combine(fileSettings.BasePath, job.StoredFilePath))); 
+        Assert.True(File.Exists(Path.Combine(fileSettings.BasePath, job.StoredFilePath)));
         File.Delete(Path.Combine(fileSettings.BasePath, job.StoredFilePath));
     }
 }

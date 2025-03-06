@@ -1,5 +1,4 @@
-using Budget.Application;
-using Budget.Application.MessageBus.Consumers;
+using System.Reflection;
 using Budget.Infrastructure.Database;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -19,12 +18,9 @@ public static class StartupExtensions
         {
             options.UseNpgsql(config.GetConnectionString("Default"));
         });
-        builder.Services.AddScoped<IBudgetContext, BudgetContext>();
 
         builder.Services.AddMassTransit(x =>
         {
-            x.AddConsumer<ProcessTransactionsFileConsumer>();
-            
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(config.GetValue<string>("MessageBus:Host"), "/", h =>
@@ -37,5 +33,17 @@ public static class StartupExtensions
             });
         });
         // builder.Services.AddHostedService<Worker>();
+
+        Assembly.GetExecutingAssembly().GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Name.EndsWith("Repository"))
+            .ToList()
+            .ForEach(type =>
+            {
+                var interfaceType = type.GetInterfaces().FirstOrDefault();
+                if (interfaceType != null)
+                {
+                    builder.Services.AddScoped(interfaceType, type);
+                }
+            });
     }
 }

@@ -2,13 +2,14 @@ using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain;
 using Budget.Domain.Commands;
+using Budget.Domain.Repositories;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace Budget.Application.UseCases;
 
 public class TransactionsFileJobStartUseCase(
-    IBudgetContext db,
+    ITransactionsFileJobRepository repo,
     IPublishEndpoint endpoint,
     ILogger<TransactionsFileJobStartUseCase> logger,
     FileStorageSettings fileSettings,
@@ -58,8 +59,8 @@ public class TransactionsFileJobStartUseCase(
             StoredFilePath = fileStoreResult.Value,
             OriginalFileName = command.File.FileName,
         };
-        await db.TransactionsFileJobs.AddAsync(job);
-        await db.SaveChangesAsync();
+        await repo.AddAsync(job);
+        await repo.SaveChangesAsync();
         
         await endpoint.Publish<ProcessTransactionsFile>(new
         {

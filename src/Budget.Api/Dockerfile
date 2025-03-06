@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Budget.Api/Budget.Api.csproj", "Budget.Api/"]
-RUN dotnet restore "Budget.Api/Budget.Api.csproj"
+COPY ["src/Budget.Api/Budget.Api.csproj", "src/Budget.Api/"]
+RUN dotnet restore "src/Budget.Api/Budget.Api.csproj"
 COPY . .
-WORKDIR "/src/Budget.Api"
+WORKDIR "/src/src/Budget.Api"
 RUN dotnet build "Budget.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

@@ -1,0 +1,70 @@
+services:
+  api:
+    platform: linux/arm64  # Explicit ARM64 target
+    build:
+      context: .
+      dockerfile: src/Budget.Api/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Debug
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
+      - MessageBus__Host=rabbitmq
+    ports:
+      - "8888:8080"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - budget-network
+
+  worker:
+    platform: linux/arm64  # Explicit ARM64 target
+    build:
+      context: .
+      dockerfile: src/Budget.Worker/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Debug
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Database=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
+      - MessageBus__Host=rabbitmq
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - budget-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P@ssw0rd
+      POSTGRES_DB: budget
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5444:5432"
+    networks:
+      - budget-network
+
+  rabbitmq:
+    image: masstransit/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - budget-network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  budget-network:
+    driver: bridge

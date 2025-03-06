@@ -2,7 +2,7 @@
 
 public class Transaction
 {
-    public int Id { get; init; }
+    public int Id { get; set; }
     public int FollowNumber { get; init; }
     public required string Iban { get; init; }
     public required string Currency { get; init; }

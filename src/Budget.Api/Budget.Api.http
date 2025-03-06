@@ -1,4 +1,4 @@
-@Budget_Api_HostAddress = https://localhost:7070
+@Budget_Api_HostAddress = http://localhost:8888
 @keycloak_url = https://auth.timo-hermans.nl
 @realm = home
 @client_id = budget_api
