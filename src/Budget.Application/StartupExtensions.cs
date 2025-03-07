@@ -14,9 +14,16 @@ public static class StartupExtensions
         var config = builder.Configuration;
         
         Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => type.Name.EndsWith("UseCase"))
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Name.EndsWith("UseCase"))
             .ToList()
-            .ForEach(type => services.AddScoped(type));
+            .ForEach(type =>
+            {
+                var interfaceType = type.GetInterfaces().FirstOrDefault();
+                if (interfaceType != null)
+                {
+                    builder.Services.AddScoped(interfaceType, type);
+                }
+            });
 
         var fileSettings = new FileStorageSettings();
         config.GetSection("FileStorage").Bind(fileSettings);
