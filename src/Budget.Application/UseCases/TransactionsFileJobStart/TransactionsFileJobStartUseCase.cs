@@ -8,12 +8,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Budget.Application.UseCases;
 
+public interface ITransactionsFileJobStartUseCase
+{
+    Task<Result<TransactionsFileJobStartUseCase.Response>> HandleAsync(TransactionsFileJobStartUseCase.Command command);
+}
+
 public class TransactionsFileJobStartUseCase(
     ITransactionsFileJobRepository repo,
     IPublishEndpoint endpoint,
     ILogger<TransactionsFileJobStartUseCase> logger,
     FileStorageSettings fileSettings,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider) : ITransactionsFileJobStartUseCase
 {
     public class FileModel
     {

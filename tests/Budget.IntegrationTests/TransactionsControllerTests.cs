@@ -3,13 +3,11 @@ using Budget.Api.Controllers;
 using Budget.Application.Settings;
 using Budget.Application.UseCases;
 using Budget.Domain.Commands;
-using Budget.Domain.Enums;
 using Budget.Infrastructure.Database.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
@@ -22,6 +20,9 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
     {
         var fileStream = new MemoryStream(await File.ReadAllBytesAsync("Data/transactions-1.csv"));
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
+        object? publishedMessage = null;
+        publishEndpoint.When(p => p.Publish<ProcessTransactionsFile>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
+            .Do(args => publishedMessage = args.Arg<object>());
         await using var db = fixture.CreateContext();
         await db.Database.BeginTransactionAsync();
         var fileSettings = new FileStorageSettings { BasePath = "/Users/timohermans/Dev/tmp/dump", MaxSizeMb = 10 };
@@ -49,10 +50,12 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
         await publishEndpoint.Received()
             .Publish<
                 ProcessTransactionsFile>(Arg.Any<object>(),
-                Arg.Any<CancellationToken>()); // todo: check if I can get this to properly check args with fakeiteasy
+                Arg.Any<CancellationToken>());
         Assert.Null(job.ErrorMessage);
         Assert.Equal("transactions.csv", job.OriginalFileName);
         Assert.True(File.Exists(Path.Combine(fileSettings.BasePath, job.StoredFilePath)));
         File.Delete(Path.Combine(fileSettings.BasePath, job.StoredFilePath));
+        Assert.NotNull(publishedMessage);
+        Assert.Equivalent(new ProcessTransactionsFile { JobId = job.Id }, publishedMessage);
     }
 }

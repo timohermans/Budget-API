@@ -20,6 +20,9 @@ public static class StartupExtensions
 
         var fileSettings = new FileStorageSettings();
         config.GetSection("FileStorage").Bind(fileSettings);
+        
+        if (!fileSettings.IsValid) throw new InvalidOperationException("FileSettings are not valid");
+        
         services.AddSingleton(fileSettings);
     }
 }

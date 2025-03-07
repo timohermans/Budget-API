@@ -7,7 +7,7 @@ namespace Budget.Api.Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize]
-public class TransactionsController(TransactionsFileJobStartUseCase useCase) : ControllerBase
+public class TransactionsController(ITransactionsFileJobStartUseCase useCase) : ControllerBase
 {
     [HttpPost("upload")]
     [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] 
