@@ -11,7 +11,7 @@ public class TestDatabaseFixture : IAsyncLifetime
 {
     private static readonly SemaphoreSlim Semaphore = new(1, 1);
     private static bool _databaseInitialized;
-    private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
+    private static readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
 
     public BudgetContext CreateContext()
     {
@@ -54,9 +54,9 @@ public class TestDatabaseFixture : IAsyncLifetime
         //     new Blog { Name = "Blog2", Url = "http://blog2.com" });
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
-        return _postgreSqlContainer.DisposeAsync().AsTask();
+        await _postgreSqlContainer.DisposeAsync();
     }
 }
 
