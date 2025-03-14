@@ -1,3 +1,5 @@
+using Budget.Application.Interfaces;
+using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileEtl;
 using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain.Commands;
@@ -9,8 +11,10 @@ namespace Budget.Worker.Consumers;
 
 public class ProcessTransactionsFileConsumer(
     ITransactionsFileJobRepository repo,
-    TransactionsFileEtlUseCase useCase,
-    ILogger<ProcessTransactionsFile> logger)
+    ITransactionsFileEtlUseCase useCase,
+    ILogger<ProcessTransactionsFile> logger,
+    FileStorageSettings fileStorageSettings,
+    IFileSystem fileSystem)
     : IConsumer<ProcessTransactionsFile>
 {
     public async Task Consume(ConsumeContext<ProcessTransactionsFile> context)
@@ -24,25 +28,27 @@ public class ProcessTransactionsFileConsumer(
             return;
         }
 
+        var filePathAbsolute = Path.Combine(fileStorageSettings.BasePath ?? "/", job.StoredFilePath);
+
         job.Status = JobStatus.Processing;
         await repo.SaveChangesAsync();
 
-        if (!File.Exists(job.StoredFilePath))
+        if (!fileSystem.FileExists(filePathAbsolute))
         {
             job.Status = JobStatus.Failed;
-            job.ErrorMessage = $"File {job.StoredFilePath} does not exist";
+            job.ErrorMessage = $"File {filePathAbsolute} does not exist";
             await repo.SaveChangesAsync();
             return;
         }
 
-        var fileStream = File.OpenRead(job.StoredFilePath);
+        var fileStream = fileSystem.OpenRead(filePathAbsolute);
 
         var result = await useCase.HandleAsync(fileStream);
 
         if (result.IsFailure)
         {
             job.Status = JobStatus.Failed;
-            job.ErrorMessage = result.Error;
+            job.ErrorMessage = $"UseCase failed with message: {result.Error}";
         }
         else
         {

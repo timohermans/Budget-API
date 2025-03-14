@@ -1,4 +1,4 @@
-@Budget_Api_HostAddress = http://localhost:8888
+@Budget_Api_HostAddress = http://localhost:5280
 @keycloak_url = https://auth.timo-hermans.nl
 @realm = home
 @client_id = budget_api
@@ -25,3 +25,11 @@ Authorization: Bearer {{login.response.body.access_token}}
 POST {{Budget_Api_HostAddress}}/transactions/upload
 Accept: application/json
 Authorization: Bearer {{login.response.body.access_token}}
+Content-Type: multipart/form-data; boundary=FileBoundary
+
+--FileBoundary
+Content-Disposition: form-data; name="file"; filename="transactions-test.csv"
+Content-Type: text/csv
+
+< ./transactions-test.csv
+--FileBoundary--

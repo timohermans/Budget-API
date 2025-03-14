@@ -10,29 +10,27 @@ namespace Budget.Infrastructure;
 
 public static class StartupExtensions
 {
-    public static void AddInfrastructure(this IHostApplicationBuilder builder)
+    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, Action<IBusRegistrationConfigurator>? configureMassTransit = null)
     {
-        var config = builder.Configuration;
-
-        builder.Services.AddDbContext<BudgetContext>(options =>
+        services.AddDbContext<BudgetContext>(options =>
         {
-            options.UseNpgsql(config.GetConnectionString("Default"));
+            options.UseNpgsql(configuration.GetConnectionString("Default"));
         });
-
-        builder.Services.AddMassTransit(x =>
+        
+        services.AddMassTransit(x =>
         {
+            configureMassTransit?.Invoke(x);
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(config.GetValue<string>("MessageBus:Host"), "/", h =>
+                cfg.Host(configuration.GetValue<string>("MessageBus:Host"), "/", h =>
                 {
-                    h.Username(config.GetValue<string>("MessageBus:Username") ?? "guest");
-                    h.Password(config.GetValue<string>("MessageBus:Password") ?? "guest");
+                    h.Username(configuration.GetValue<string>("MessageBus:Username") ?? "guest");
+                    h.Password(configuration.GetValue<string>("MessageBus:Password") ?? "guest");
                 });
 
                 cfg.ConfigureEndpoints(context);
             });
         });
-        // builder.Services.AddHostedService<Worker>();
 
         Assembly.GetExecutingAssembly().GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.Name.EndsWith("Repository"))
@@ -42,7 +40,7 @@ public static class StartupExtensions
                 var interfaceType = type.GetInterfaces().FirstOrDefault();
                 if (interfaceType != null)
                 {
-                    builder.Services.AddScoped(interfaceType, type);
+                    services.AddScoped(interfaceType, type);
                 }
             });
     }

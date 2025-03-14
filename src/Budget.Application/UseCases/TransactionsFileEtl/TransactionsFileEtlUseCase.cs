@@ -8,7 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Budget.Application.UseCases.TransactionsFileEtl;
 
+public interface ITransactionsFileEtlUseCase
+{
+    Task<Result> HandleAsync(Stream stream);
+}
+
 public class TransactionsFileEtlUseCase(ITransactionRepository repo, ILogger<TransactionsFileEtlUseCase> logger)
+    : ITransactionsFileEtlUseCase
 {
     public async Task<Result> HandleAsync(Stream stream)
     {

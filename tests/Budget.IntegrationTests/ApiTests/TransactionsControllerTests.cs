@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using Budget.Api.Controllers;
 using Budget.Application.Settings;
 using Budget.Application.UseCases;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
-namespace Budget.IntegrationTests.Api;
+namespace Budget.IntegrationTests.ApiTests;
 
 public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseFixture>
 {

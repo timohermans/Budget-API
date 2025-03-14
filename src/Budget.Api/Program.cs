@@ -5,8 +5,8 @@ using Budget.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddBudgetApi();
-builder.AddBudgetApplication();
-builder.AddInfrastructure();
+builder.Services.AddBudgetApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
