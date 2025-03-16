@@ -21,7 +21,11 @@ public class TransactionsFileEtlUseCase(ITransactionRepository repo, ILogger<Tra
         logger.LogInformation("Handling Transaction file upload");
 
         using var reader = new StreamReader(stream);
-        using var csv = new CsvReader(reader, new CultureInfo("nl-NL"));
+        using var csv = new CsvReader(reader, new CsvHelper.Configuration.CsvConfiguration(new CultureInfo("nl-NL"))
+        {
+            HasHeaderRecord = true,
+            Delimiter = ","
+        });
 
         var records = csv.GetRecords<TransactionsFileCsvMap>();
 
@@ -40,12 +44,13 @@ public class TransactionsFileEtlUseCase(ITransactionRepository repo, ILogger<Tra
             {
                 Iban = r.Iban,
                 Currency = r.Currency,
-                Amount = Convert.ToDecimal(r.Amount, new CultureInfo("nl-NL")),
+                DateTransaction = r.Date,
+                Amount = r.Amount.Value,
                 AuthorizationCode = r.AuthorizationCode,
-                BalanceAfterTransaction = Convert.ToDecimal(r.BalanceAfter, new CultureInfo("nl-NL")),
+                BalanceAfterTransaction = r.BalanceAfter.Value,
                 IbanOtherParty = r.IbanOtherParty,
                 NameOtherParty = r.NameOtherParty,
-                Description = r.Description1 + r.Description2 + r.Description3
+                Description = (r.Description1 + r.Description2 + r.Description3).Trim()
             });
         }
 
