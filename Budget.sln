@@ -1,18 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Api", ".\src\Budget.Api\Budget.Api.csproj", "{74D5040C-C06E-42BD-BD38-BCE5D9970118}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35913.81 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Api", "src\Budget.Api\Budget.Api.csproj", "{74D5040C-C06E-42BD-BD38-BCE5D9970118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Application", ".\src\Budget.Application\Budget.Application.csproj", "{AB9E640C-7752-4198-AB54-2C545D44D439}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Application", "src\Budget.Application\Budget.Application.csproj", "{AB9E640C-7752-4198-AB54-2C545D44D439}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Domain", ".\src\Budget.Domain\Budget.Domain.csproj", "{B6473E7E-83DC-4ADA-8AE4-B57B954F0641}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Domain", "src\Budget.Domain\Budget.Domain.csproj", "{B6473E7E-83DC-4ADA-8AE4-B57B954F0641}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Infrastructure", ".\src\Budget.Infrastructure\Budget.Infrastructure.csproj", "{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Infrastructure", "src\Budget.Infrastructure\Budget.Infrastructure.csproj", "{2F61436F-1B90-4CEB-BE53-CB57B13DA0E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B44F0CD8-1D19-4899-BB4D-41B97C9D3497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.IntegrationTests", ".\tests\Budget.IntegrationTests\Budget.IntegrationTests.csproj", "{B540D7E8-889B-4925-A64E-391956E675E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.IntegrationTests", "tests\Budget.IntegrationTests\Budget.IntegrationTests.csproj", "{B540D7E8-889B-4925-A64E-391956E675E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.UnitTests", ".\tests\Budget.UnitTests\Budget.UnitTests.csproj", "{FE89D758-86F4-43F8-A5D1-722D06A7299D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.UnitTests", "tests\Budget.UnitTests\Budget.UnitTests.csproj", "{FE89D758-86F4-43F8-A5D1-722D06A7299D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budget.Worker", "src\Budget.Worker\Budget.Worker.csproj", "{29D1488B-B5D9-470B-8EE9-75E5F89E010F}"
 EndProject
@@ -117,5 +120,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B540D7E8-889B-4925-A64E-391956E675E9} = {B44F0CD8-1D19-4899-BB4D-41B97C9D3497}
 		{FE89D758-86F4-43F8-A5D1-722D06A7299D} = {B44F0CD8-1D19-4899-BB4D-41B97C9D3497}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D39DD640-C7C6-43CF-BE11-2C58BD4194DB}
 	EndGlobalSection
 EndGlobal

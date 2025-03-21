@@ -41,7 +41,7 @@ public class ProcessTransactionsFileConsumer(
             return;
         }
 
-        var fileStream = fileSystem.OpenRead(filePathAbsolute);
+        await using var fileStream = fileSystem.OpenRead(filePathAbsolute);
 
         var result = await useCase.HandleAsync(fileStream);
 

@@ -18,14 +18,14 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
     [Fact]
     public async Task Upload_CorrectFile_SavesCorrectly()
     {
-        var fileStream = new MemoryStream(await File.ReadAllBytesAsync("Data/transactions-1.csv"));
+        var fileStream = new MemoryStream(await File.ReadAllBytesAsync("Data/transactions-1.csv", TestContext.Current.CancellationToken));
         var publishEndpoint = Substitute.For<IPublishEndpoint>();
         object? publishedMessage = null;
         publishEndpoint.When(p => p.Publish<ProcessTransactionsFile>(Arg.Any<object>(), Arg.Any<CancellationToken>()))
             .Do(args => publishedMessage = args.Arg<object>());
         await using var db = fixture.CreateContext();
-        await db.Database.BeginTransactionAsync();
-        var fileSettings = new FileStorageSettings { BasePath = "/Users/timohermans/Dev/tmp/dump", MaxSizeMb = 10 };
+        await db.Database.BeginTransactionAsync(TestContext.Current.CancellationToken);
+        var fileSettings = new FileStorageSettings { BasePath = fixture.FileStorageSettings.BasePath, MaxSizeMb = 10 };
         var controller = new TransactionsController(
             new TransactionsFileJobStartUseCase(
                 new TransactionsFileJobRepository(db),
@@ -43,7 +43,7 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
         var result = await controller.Upload(formFile);
 
         db.ChangeTracker.Clear();
-        var job = await db.TransactionsFileJobs.FirstOrDefaultAsync();
+        var job = await db.TransactionsFileJobs.FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal(typeof(OkObjectResult), result.GetType());
         Assert.NotNull(job);
@@ -53,8 +53,8 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
                 Arg.Any<CancellationToken>());
         Assert.Null(job.ErrorMessage);
         Assert.Equal("transactions.csv", job.OriginalFileName);
-        Assert.True(File.Exists(Path.Combine(fileSettings.BasePath, job.StoredFilePath)));
-        File.Delete(Path.Combine(fileSettings.BasePath, job.StoredFilePath));
+        Assert.True(File.Exists(Path.Combine(fixture.FileStorageSettings.BasePath!, job.StoredFilePath)));
+        File.Delete(Path.Combine(fixture.FileStorageSettings.BasePath!, job.StoredFilePath));
         Assert.NotNull(publishedMessage);
         Assert.Equivalent(new ProcessTransactionsFile { JobId = job.Id }, publishedMessage);
     }

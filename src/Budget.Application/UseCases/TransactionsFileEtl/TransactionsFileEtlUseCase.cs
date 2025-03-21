@@ -45,6 +45,7 @@ public class TransactionsFileEtlUseCase(ITransactionRepository repo, ILogger<Tra
                 Iban = r.Iban,
                 Currency = r.Currency,
                 DateTransaction = r.Date,
+                FollowNumber = r.FollowNumber,
                 Amount = r.Amount.Value,
                 AuthorizationCode = r.AuthorizationCode,
                 BalanceAfterTransaction = r.BalanceAfter.Value,

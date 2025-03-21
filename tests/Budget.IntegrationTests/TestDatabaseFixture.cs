@@ -1,17 +1,21 @@
+using Budget.Application.Settings;
 using Budget.Infrastructure.Database;
+using Budget.IntegrationTests;
 using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Testcontainers.PostgreSql;
+
+[assembly: AssemblyFixture(typeof(TestDatabaseFixture))]
 
 namespace Budget.IntegrationTests;
 
-#region TestDatabaseFixture
 
 public class TestDatabaseFixture : IAsyncLifetime
 {
-    private static readonly SemaphoreSlim Semaphore = new(1, 1);
-    private static bool _databaseInitialized;
-    private static readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
+    private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
+
+    public FileStorageSettings FileStorageSettings { get; }
 
     public BudgetContext CreateContext()
     {
@@ -22,42 +26,38 @@ public class TestDatabaseFixture : IAsyncLifetime
         return db;
     }
 
-    public async Task InitializeAsync()
+    public TestDatabaseFixture()
     {
-        await Semaphore.WaitAsync();
-        try
-        {
-            if (!_databaseInitialized)
-            {
-                await _postgreSqlContainer.StartAsync();
-                await using (var context = CreateContext())
-                {
-                    await context.Database.EnsureCreatedAsync();
-                    await SeedDataAsync(context);
-                    await context.SaveChangesAsync();
-                }
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.Development.json")
+            .Build();
 
-                _databaseInitialized = true;
-            }
-        }
-        finally
+        FileStorageSettings = configuration.GetSection("FileStorage").Get<FileStorageSettings>() ?? throw new InvalidOperationException();
+    }
+
+    public async ValueTask InitializeAsync()
+    {
+        await _postgreSqlContainer.StartAsync();
+        await using (var context = CreateContext())
         {
-            Semaphore.Release();
+            await context.Database.EnsureCreatedAsync();
+            await SeedDataAsync(context);
+            await context.SaveChangesAsync();
         }
     }
 
-    public async Task SeedDataAsync(BudgetContext context)
+    public Task SeedDataAsync(BudgetContext context)
     {
         // Fill when necessary
         // context.AddRange(
         //     new Blog { Name = "Blog1", Url = "http://blog1.com" },
         //     new Blog { Name = "Blog2", Url = "http://blog2.com" });
+        return Task.CompletedTask;
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         await _postgreSqlContainer.DisposeAsync();
     }
 }
-
-#endregion

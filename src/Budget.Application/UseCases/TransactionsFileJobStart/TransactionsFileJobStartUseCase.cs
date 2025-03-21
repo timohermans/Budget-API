@@ -22,15 +22,15 @@ public class TransactionsFileJobStartUseCase(
 {
     public class FileModel
     {
-        public byte[] Content { get; init; }
-        public string FileName { get; init; }
-        public string ContentType { get; init; }
+        public required byte[] Content { get; init; }
+        public required string FileName { get; init; }
+        public required string ContentType { get; init; }
         public long Size { get; init; }
     }
 
     public class Command
     {
-        public FileModel File { get; init; }
+        public required FileModel File { get; init; }
     }
 
     public class Response
