@@ -2,6 +2,7 @@ using Budget.Api.Controllers;
 using Budget.Application.Settings;
 using Budget.Application.UseCases;
 using Budget.Domain.Commands;
+using Budget.Domain.Repositories;
 using Budget.Infrastructure.Database.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ using NSubstitute;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseFixture>
+public class TransactionsControllerUploadTests(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseFixture>
 {
     [Fact]
     public async Task Upload_CorrectFile_SavesCorrectly()
@@ -31,7 +32,8 @@ public class TransactionsControllerTests(TestDatabaseFixture fixture) : IClassFi
                 NullLogger<TransactionsFileJobStartUseCase>.Instance,
                 fixture.FileStorageSettings,
                 TimeProvider.System
-            ));
+            ),
+            Substitute.For<ITransactionRepository>());
         var formFile = new FormFile(fileStream, 0, fileStream.Length, "transactions", "transactions.csv")
         {
             Headers = new HeaderDictionary(),

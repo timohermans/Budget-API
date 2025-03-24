@@ -7,4 +7,5 @@ public interface ITransactionRepository : IRepository
 {
     Task<IEnumerable<TransactionIdDto>> GetIdsBetweenAsync(DateOnly firstDate, DateOnly lastDate);
     Task AddRangeAsync(IEnumerable<Transaction> transactions);
+    Task<IEnumerable<Transaction>> GetTransactionsByAsync(int year, int month, string? iban);
 }

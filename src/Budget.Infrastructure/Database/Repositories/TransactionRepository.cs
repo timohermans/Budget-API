@@ -22,9 +22,23 @@ public class TransactionRepository(BudgetContext db) : ITransactionRepository
 
     public async Task AddRangeAsync(IEnumerable<Transaction> transactions)
     {
-        await db.AddRangeAsync(transactions);
+        await db.Transactions.AddRangeAsync(transactions);
     }
-    
+
+    public async Task<IEnumerable<Transaction>> GetTransactionsByAsync(int year, int month, string? iban)
+    {
+        var query = db.Transactions.AsQueryable();
+
+        query = query.Where(t => t.DateTransaction.Year == year && t.DateTransaction.Month == month);
+
+        if (!string.IsNullOrEmpty(iban))
+        {
+            query = query.Where(t => t.Iban == iban);
+        }
+
+        return await query.ToListAsync();
+    }
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await db.SaveChangesAsync(cancellationToken);

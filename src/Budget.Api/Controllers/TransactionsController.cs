@@ -1,4 +1,5 @@
 using Budget.Application.UseCases;
+using Budget.Domain.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +8,7 @@ namespace Budget.Api.Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize]
-public class TransactionsController(ITransactionsFileJobStartUseCase useCase) : ControllerBase
+public class TransactionsController(ITransactionsFileJobStartUseCase useCase, ITransactionRepository transactionRepository) : ControllerBase
 {
     [HttpPost("upload")]
     [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] 
@@ -37,6 +38,13 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase) : 
         }
 
         return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetTransactions([FromQuery] int year, [FromQuery] int month, [FromQuery] string? iban)
+    {
+        var transactions = await transactionRepository.GetTransactionsByAsync(year, month, iban);
+        return Ok(transactions);
     }
 
     private byte[] GetFileBytesFrom(IFormFile file)

@@ -1,6 +1,7 @@
 using Budget.Api.Controllers;
 using Budget.Application.UseCases;
 using Budget.Domain;
+using Budget.Domain.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class TransactionsControllerTests
     public TransactionsControllerTests()
     {
         _useCaseSubstitute = Substitute.For<ITransactionsFileJobStartUseCase>();
-        _controller = new TransactionsController(_useCaseSubstitute);
+        _controller = new TransactionsController(_useCaseSubstitute, Substitute.For<ITransactionRepository>());
     }
 
     [Fact]
