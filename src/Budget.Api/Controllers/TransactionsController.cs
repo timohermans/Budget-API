@@ -41,10 +41,17 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTransactions([FromQuery] int year, [FromQuery] int month, [FromQuery] string? iban)
+    public async Task<IActionResult> GetTransactions([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
-        var transactions = await transactionRepository.GetTransactionsByAsync(year, month, iban);
+        var transactions = await transactionRepository.GetTransactionsByDateRangeAsync(startDate, endDate, iban);
         return Ok(transactions);
+    }
+
+    [HttpGet("ibans")]
+    public async Task<IActionResult> GetAllDistinctIbans()
+    {
+        var ibans = await transactionRepository.GetAllDistinctIbansAsync();
+        return Ok(ibans);
     }
 
     private byte[] GetFileBytesFrom(IFormFile file)

@@ -10,6 +10,7 @@ using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -51,7 +52,7 @@ namespace Budget.IntegrationTests.ApiTests
             var controller = CreateController(db);
 
             // Act
-            var result = await controller.GetTransactions(2025, 3, null);
+            var result = await controller.GetTransactions(new DateOnly(2025, 3, 1), new DateOnly(2025, 3, 31), null);
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnedTransactions = Assert.IsType<List<Transaction>>(okResult.Value);
 
@@ -83,7 +84,7 @@ namespace Budget.IntegrationTests.ApiTests
             var controller = CreateController(db);
 
             // Act
-            var result = await controller.GetTransactions(2025, 3, "NL01TEST");
+            var result = await controller.GetTransactions(new DateOnly(2025, 3, 1), new DateOnly(2025, 3, 31), "NL01TEST");
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnedTransactions = Assert.IsType<List<Transaction>>(okResult.Value);
 
@@ -93,6 +94,37 @@ namespace Budget.IntegrationTests.ApiTests
             Assert.Contains(returnedTransactions, t => t.Id == 3);
             Assert.DoesNotContain(returnedTransactions, t => t.Id == 2);
             Assert.DoesNotContain(returnedTransactions, t => t.Id == 4);
+        }
+
+        [Fact]
+        public async Task GetAllDistinctIbans_ReturnsDistinctIbans()
+        {
+            // Arrange
+            await using var db = _fixture.CreateContext();
+            await db.Database.BeginTransactionAsync(TestContext.Current.CancellationToken);
+
+            var transactions = new List<Transaction>
+            {
+                new Transaction { Id = 1, FollowNumber = 1, Iban = "NL01TEST", Currency = "EUR", Amount = 100, DateTransaction = new DateOnly(2025, 3, 1), BalanceAfterTransaction = 100 },
+                new Transaction { Id = 2, FollowNumber = 2, Iban = "NL02TEST", Currency = "EUR", Amount = 200, DateTransaction = new DateOnly(2025, 3, 2), BalanceAfterTransaction = 300 },
+                new Transaction { Id = 3, FollowNumber = 3, Iban = "NL01TEST", Currency = "EUR", Amount = 300, DateTransaction = new DateOnly(2025, 3, 3), BalanceAfterTransaction = 600 }
+            };
+
+            await db.Transactions.AddRangeAsync(transactions, TestContext.Current.CancellationToken);
+            await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+
+            var controller = CreateController(db);
+
+            // Act
+            var result = await controller.GetAllDistinctIbans();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedIbans = Assert.IsType<List<string>>(okResult.Value);
+            Assert.Equal((int)HttpStatusCode.OK, okResult.StatusCode);
+            Assert.Equal(2, returnedIbans.Count);
+            Assert.Contains("NL01TEST", returnedIbans);
+            Assert.Contains("NL02TEST", returnedIbans);
         }
     }
 }

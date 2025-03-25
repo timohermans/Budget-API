@@ -25,11 +25,11 @@ public class TransactionRepository(BudgetContext db) : ITransactionRepository
         await db.Transactions.AddRangeAsync(transactions);
     }
 
-    public async Task<IEnumerable<Transaction>> GetTransactionsByAsync(int year, int month, string? iban)
+    public async Task<IEnumerable<Transaction>> GetTransactionsByDateRangeAsync(DateOnly startDate, DateOnly endDate, string? iban)
     {
         var query = db.Transactions.AsQueryable();
 
-        query = query.Where(t => t.DateTransaction.Year == year && t.DateTransaction.Month == month);
+        query = query.Where(t => t.DateTransaction >= startDate && t.DateTransaction <= endDate);
 
         if (!string.IsNullOrEmpty(iban))
         {
@@ -37,6 +37,14 @@ public class TransactionRepository(BudgetContext db) : ITransactionRepository
         }
 
         return await query.ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetAllDistinctIbansAsync()
+    {
+        return await db.Transactions
+            .Select(t => t.Iban)
+            .Distinct()
+            .ToListAsync();
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
