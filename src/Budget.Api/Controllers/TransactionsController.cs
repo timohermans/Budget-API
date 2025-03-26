@@ -54,6 +54,14 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
         return Ok(ibans);
     }
 
+    [HttpGet("cashflow-per-iban")]
+    public async Task<IActionResult> GetCashflowPerIban([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
+    {
+        var cashFlowPerIban = await transactionRepository.GetCashFlowPerIbanAsync(startDate, endDate, iban);
+
+        return Ok(cashFlowPerIban);
+    }
+
     private byte[] GetFileBytesFrom(IFormFile file)
     {
         using var memoryStream = new MemoryStream();

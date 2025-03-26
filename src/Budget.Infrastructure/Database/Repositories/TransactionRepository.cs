@@ -42,13 +42,57 @@ public class TransactionRepository(BudgetContext db) : ITransactionRepository
     public async Task<IEnumerable<string>> GetAllDistinctIbansAsync()
     {
         return await db.Transactions
-            .Select(t => t.Iban)
-            .Distinct()
+            .GroupBy(t => t.Iban)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
             .ToListAsync();
     }
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<CashflowDto> GetCashFlowPerIbanAsync(DateOnly startDate, DateOnly endDate, string? iban)
+    {
+        string? ibanForCashflow = iban;
+
+        if (string.IsNullOrEmpty(ibanForCashflow))
+        {
+            ibanForCashflow = await db
+                .Transactions
+                .Where(t => t.DateTransaction >= startDate && t.DateTransaction <= endDate)
+                .GroupBy(t => t.Iban)
+                .OrderByDescending(g => g.Max(it => it.BalanceAfterTransaction))
+                .Select(g => g.Any() ? g.First().Iban : null)
+                .FirstOrDefaultAsync();
+        }
+
+        if (ibanForCashflow == null)
+        {
+            return new CashflowDto
+            {
+                Iban = "None",
+                BalancesPerDate = []
+            };
+        }
+
+        var balancesPerDate = await db
+            .Transactions
+            .Where(t => t.Iban == ibanForCashflow && t.DateTransaction >= startDate && t.DateTransaction <= endDate)
+            .GroupBy(t => t.DateTransaction)
+            .Select(g => new BalanceAtDateDto
+            {
+                Date = g.Key,
+                Balance = g.OrderByDescending(t => t.FollowNumber).First().BalanceAfterTransaction
+            })
+            .OrderBy(t => t.Date)
+            .ToListAsync();
+
+        return new CashflowDto
+        {
+            Iban = ibanForCashflow,
+            BalancesPerDate = balancesPerDate
+        };
     }
 }
