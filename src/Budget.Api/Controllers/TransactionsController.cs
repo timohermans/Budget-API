@@ -11,7 +11,7 @@ namespace Budget.Api.Controllers;
 public class TransactionsController(ITransactionsFileJobStartUseCase useCase, ITransactionRepository transactionRepository) : ControllerBase
 {
     [HttpPost("upload")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)] 
+    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)]
     public async Task<IActionResult> Upload([FromForm] IFormFile? file)
     {
         if (file == null || file.Length == 0)

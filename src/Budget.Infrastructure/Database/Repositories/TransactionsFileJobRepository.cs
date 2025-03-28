@@ -14,7 +14,7 @@ public class TransactionsFileJobRepository(BudgetContext db) : ITransactionsFile
     {
         await db.TransactionsFileJobs.AddAsync(job);
     }
-    
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await db.SaveChangesAsync(cancellationToken);

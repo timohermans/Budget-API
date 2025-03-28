@@ -42,14 +42,14 @@ public class TransactionsFileJobStartUseCase(
     {
         var fileValidator = new TransactionsFileValidator(fileSettings, logger);
         var fileStorer = new FileStorer(fileSettings, logger);
-        
+
         var validateResult = fileValidator.IsValid(command.File);
 
         if (validateResult.IsFailure)
         {
             return Result<Response>.Failure(validateResult.Error);
         }
-        
+
         var fileStoreResult = await fileStorer.Store(command.File);
 
         if (fileStoreResult.IsFailure)
@@ -66,7 +66,7 @@ public class TransactionsFileJobStartUseCase(
         };
         await repo.AddAsync(job);
         await repo.SaveChangesAsync();
-        
+
         await endpoint.Publish<ProcessTransactionsFile>(new
         {
             JobId = job.Id

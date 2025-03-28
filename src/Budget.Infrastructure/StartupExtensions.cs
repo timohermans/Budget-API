@@ -16,7 +16,7 @@ public static class StartupExtensions
         {
             options.UseNpgsql(configuration.GetConnectionString("Default"));
         });
-        
+
         services.AddMassTransit(x =>
         {
             configureMassTransit?.Invoke(x);

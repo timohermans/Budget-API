@@ -196,14 +196,17 @@ namespace Budget.IntegrationTests.ApiTests
             Assert.Collection(result.BalancesPerDate,
                 bpd =>
                 {
+                    Assert.Equal(new DateOnly(2025, 3, 1), bpd.Date);
                     Assert.Equal(100, bpd.Balance);
                 },
                 bpd =>
                 {
+                    Assert.Equal(new DateOnly(2025, 3, 3), bpd.Date);
                     Assert.Equal(400, bpd.Balance);
                 },
                 bpd =>
                 {
+                    Assert.Equal(new DateOnly(2025, 3, 5), bpd.Date);
                     Assert.Equal(1500, bpd.Balance);
                 });
         }

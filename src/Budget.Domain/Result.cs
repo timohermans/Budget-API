@@ -22,7 +22,7 @@ public class Result<T> : Result
     private readonly T _value;
     public T Value => IsSuccess ? _value : throw new InvalidOperationException("Cannot access Value on failure result");
 
-    protected Result(T value, bool isSuccess, string error) 
+    protected Result(T value, bool isSuccess, string error)
         : base(isSuccess, error)
     {
         _value = value;
