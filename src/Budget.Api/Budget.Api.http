@@ -33,3 +33,21 @@ Content-Type: text/csv
 
 < ./transactions-test.csv
 --FileBoundary--
+
+###
+
+GET {{Budget_Api_HostAddress}}/transactions?startDate=2025-03-01&endDate=2025-05-01
+Accept: application/json
+Authorization: Bearer {{login.response.body.access_token}}
+
+###
+
+GET {{Budget_Api_HostAddress}}/transactions/ibans
+Accept: application/json
+Authorization: Bearer {{login.response.body.access_token}}
+
+###
+
+GET {{Budget_Api_HostAddress}}/transactions/cashflow-per-iban
+Accept: application/json
+Authorization: Bearer {{login.response.body.access_token}}

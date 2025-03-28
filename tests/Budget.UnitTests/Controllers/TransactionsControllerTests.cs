@@ -2,7 +2,6 @@ using Budget.Api.Controllers;
 using Budget.Application.UseCases;
 using Budget.Domain;
 using Budget.Domain.Repositories;
-using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;

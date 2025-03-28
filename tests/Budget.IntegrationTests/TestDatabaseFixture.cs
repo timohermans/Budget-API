@@ -1,7 +1,6 @@
 using Budget.Application.Settings;
 using Budget.Infrastructure.Database;
 using Budget.IntegrationTests;
-using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Testcontainers.PostgreSql;

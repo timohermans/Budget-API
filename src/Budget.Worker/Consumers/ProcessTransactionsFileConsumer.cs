@@ -1,7 +1,6 @@
 using Budget.Application.Interfaces;
 using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileEtl;
-using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain.Commands;
 using Budget.Domain.Enums;
 using Budget.Domain.Repositories;

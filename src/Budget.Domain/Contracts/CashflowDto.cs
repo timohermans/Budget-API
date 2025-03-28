@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Budget.Domain.Contracts;
+﻿namespace Budget.Domain.Contracts;
 
 public class CashflowDto
 {

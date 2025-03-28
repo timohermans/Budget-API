@@ -1,4 +1,3 @@
-using Budget.Domain.Entities;
 using Budget.Domain.Enums;
 
 namespace Budget.Domain;

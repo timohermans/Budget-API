@@ -29,7 +29,9 @@ public class TransactionRepository(BudgetContext db) : ITransactionRepository
     {
         var query = db.Transactions.AsQueryable();
 
-        query = query.Where(t => t.DateTransaction >= startDate && t.DateTransaction <= endDate);
+        query = query
+            .Where(t => t.DateTransaction >= startDate && t.DateTransaction <= endDate)
+            .OrderByDescending(t => t.DateTransaction);
 
         if (!string.IsNullOrEmpty(iban))
         {

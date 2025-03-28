@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using Budget.Api.Controllers;
 using Budget.Application.Settings;
 using Budget.Application.UseCases;

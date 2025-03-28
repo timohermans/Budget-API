@@ -1,5 +1,6 @@
 using Budget.Application.UseCases;
 using Budget.Domain.Repositories;
+using Budget.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,13 +45,29 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
     public async Task<IActionResult> GetTransactions([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
         var transactions = await transactionRepository.GetTransactionsByDateRangeAsync(startDate, endDate, iban);
-        return Ok(transactions);
+
+        var response = transactions.Select(transaction => new TransactionResponseModel
+        {
+            Id = transaction.Id,
+            FollowNumber = transaction.FollowNumber,
+            Iban = transaction.Iban,
+            Amount = transaction.Amount,
+            DateTransaction = transaction.DateTransaction,
+            NameOtherParty = transaction.NameOtherParty,
+            IbanOtherParty = transaction.IbanOtherParty,
+            AuthorizationCode = transaction.AuthorizationCode,
+            Description = transaction.Description,
+            CashbackForDate = transaction.CashbackForDate
+        }).ToList();
+
+        return Ok(response);
     }
 
     [HttpGet("ibans")]
     public async Task<IActionResult> GetAllDistinctIbans()
     {
         var ibans = await transactionRepository.GetAllDistinctIbansAsync();
+
         return Ok(ibans);
     }
 

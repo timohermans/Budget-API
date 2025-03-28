@@ -1,24 +1,16 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Budget.Application.Interfaces;
 using Budget.Application.Settings;
-using Budget.Application.UseCases;
 using Budget.Application.UseCases.TransactionsFileEtl;
 using Budget.Domain;
 using Budget.Domain.Commands;
 using Budget.Domain.Enums;
-using Budget.Domain.Repositories;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
 using Budget.Worker.Consumers;
-using Castle.Core.Logging;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using Xunit;
 
 namespace Budget.IntegrationTests.Consumers
 {

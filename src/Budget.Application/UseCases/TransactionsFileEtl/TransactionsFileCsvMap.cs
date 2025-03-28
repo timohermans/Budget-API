@@ -1,5 +1,3 @@
-using Budget.Domain.Entities;
-using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 
 namespace Budget.Application.UseCases.TransactionsFileEtl;

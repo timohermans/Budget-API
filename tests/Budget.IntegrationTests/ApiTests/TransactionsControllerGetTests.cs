@@ -1,20 +1,13 @@
 using Budget.Api.Controllers;
+using Budget.Api.Models;
 using Budget.Application.UseCases;
 using Budget.Domain.Contracts;
 using Budget.Domain.Entities;
-using Budget.Domain.Repositories;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Diagnostics;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Budget.IntegrationTests.ApiTests
 {
@@ -56,7 +49,7 @@ namespace Budget.IntegrationTests.ApiTests
             // Act
             var result = await controller.GetTransactions(new DateOnly(2025, 3, 1), new DateOnly(2025, 3, 31), null);
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedTransactions = Assert.IsType<List<Transaction>>(okResult.Value);
+            var returnedTransactions = Assert.IsType<List<TransactionResponseModel>>(okResult.Value);
 
             // Assert
             Assert.Equal(2, returnedTransactions.Count);
@@ -88,7 +81,7 @@ namespace Budget.IntegrationTests.ApiTests
             // Act
             var result = await controller.GetTransactions(new DateOnly(2025, 3, 1), new DateOnly(2025, 3, 31), "NL01TEST");
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedTransactions = Assert.IsType<List<Transaction>>(okResult.Value);
+            var returnedTransactions = Assert.IsType<List<TransactionResponseModel>>(okResult.Value);
 
             // Assert
             Assert.Equal(2, returnedTransactions.Count);

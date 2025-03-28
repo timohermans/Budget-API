@@ -1,6 +1,6 @@
 services:
   api:
-    platform: linux/arm64  # Explicit ARM64 target
+    # platform: linux/arm64  # Explicit ARM64 target
     build:
       context: .
       dockerfile: src/Budget.Api/Dockerfile
@@ -8,7 +8,7 @@ services:
         - BUILD_CONFIGURATION=Debug
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Database=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
+      - ConnectionStrings__Default=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
       - MessageBus__Host=rabbitmq
     ports:
       - "8888:8080"
@@ -21,7 +21,7 @@ services:
       - budget-network
 
   worker:
-    platform: linux/arm64  # Explicit ARM64 target
+    # platform: linux/arm64  # Explicit ARM64 target
     build:
       context: .
       dockerfile: src/Budget.Worker/Dockerfile
@@ -29,7 +29,7 @@ services:
         - BUILD_CONFIGURATION=Debug
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Database=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
+      - ConnectionStrings__Default=Host=postgres;Database=budget;Username=postgres;Password=P@ssw0rd
       - MessageBus__Host=rabbitmq
     depends_on:
       postgres:

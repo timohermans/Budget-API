@@ -1,5 +1,4 @@
 using Budget.Api.Controllers;
-using Budget.Application.Settings;
 using Budget.Application.UseCases;
 using Budget.Domain.Commands;
 using Budget.Domain.Repositories;
