@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Budget.Infrastructure.Migrations
 {
-    [DbContext(typeof(BudgetContext))]
+    [DbContext(typeof(BudgetDbContext))]
     partial class BudgetContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

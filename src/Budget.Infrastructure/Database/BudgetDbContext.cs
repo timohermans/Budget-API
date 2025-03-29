@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Budget.Infrastructure.Database;
 
-public class BudgetContext(DbContextOptions<BudgetContext> options) : DbContext(options)
+public class BudgetDbContext(DbContextOptions<BudgetDbContext> options) : DbContext(options)
 {
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionsFileJob> TransactionsFileJobs { get; set; }

@@ -16,10 +16,10 @@ public class TestDatabaseFixture : IAsyncLifetime
 
     public FileStorageSettings FileStorageSettings { get; }
 
-    public BudgetContext CreateContext()
+    public BudgetDbContext CreateContext()
     {
-        var db = new BudgetContext(
-            new DbContextOptionsBuilder<BudgetContext>()
+        var db = new BudgetDbContext(
+            new DbContextOptionsBuilder<BudgetDbContext>()
                 .UseNpgsql(_postgreSqlContainer.GetConnectionString())
                 .Options);
         return db;
@@ -46,7 +46,7 @@ public class TestDatabaseFixture : IAsyncLifetime
         }
     }
 
-    public Task SeedDataAsync(BudgetContext context)
+    public Task SeedDataAsync(BudgetDbContext context)
     {
         // Fill when necessary
         // context.AddRange(

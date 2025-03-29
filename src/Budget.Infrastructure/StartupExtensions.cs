@@ -11,7 +11,7 @@ public static class StartupExtensions
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration, Action<IBusRegistrationConfigurator>? configureMassTransit = null)
     {
-        services.AddDbContext<BudgetContext>(options =>
+        services.AddDbContext<BudgetDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("Default"));
         });

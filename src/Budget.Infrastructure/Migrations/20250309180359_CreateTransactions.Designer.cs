@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Budget.Infrastructure.Migrations
 {
-    [DbContext(typeof(BudgetContext))]
+    [DbContext(typeof(BudgetDbContext))]
     [Migration("20250309180359_CreateTransactions")]
     partial class CreateTransactions
     {

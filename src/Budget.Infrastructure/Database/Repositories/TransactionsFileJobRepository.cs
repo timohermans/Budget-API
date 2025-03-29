@@ -4,7 +4,7 @@ using Budget.Domain.Repositories;
 
 namespace Budget.Infrastructure.Database.Repositories;
 
-public class TransactionsFileJobRepository(BudgetContext db) : ITransactionsFileJobRepository
+public class TransactionsFileJobRepository(BudgetDbContext db) : ITransactionsFileJobRepository
 {
     public async Task<TransactionsFileJob?> GetByIdAsync(Guid id)
     {

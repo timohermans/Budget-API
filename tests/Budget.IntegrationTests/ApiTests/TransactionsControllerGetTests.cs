@@ -20,7 +20,7 @@ namespace Budget.IntegrationTests.ApiTests
             _fixture = fixture;
         }
 
-        private TransactionsController CreateController(BudgetContext dbContext)
+        private TransactionsController CreateController(BudgetDbContext dbContext)
         {
             var useCase = Substitute.For<ITransactionsFileJobStartUseCase>();
             var transactionRepo = new TransactionRepository(dbContext);

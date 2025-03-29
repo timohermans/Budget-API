@@ -36,7 +36,7 @@ namespace Budget.IntegrationTests.Consumers
             fileStorageSettings = fixture.FileStorageSettings;
         }
 
-        private ProcessTransactionsFileConsumer CreateConsumer(BudgetContext dbContext)
+        private ProcessTransactionsFileConsumer CreateConsumer(BudgetDbContext dbContext)
         {
             var repo = new TransactionsFileJobRepository(dbContext);
             var transactionRepo = new TransactionRepository(dbContext);

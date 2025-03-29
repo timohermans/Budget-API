@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Budget.Infrastructure.Database.Repositories;
 
-public class TransactionRepository(BudgetContext db) : ITransactionRepository
+public class TransactionRepository(BudgetDbContext db) : ITransactionRepository
 {
     public async Task<IEnumerable<TransactionIdDto>> GetIdsBetweenAsync(DateOnly firstDate, DateOnly lastDate)
     {

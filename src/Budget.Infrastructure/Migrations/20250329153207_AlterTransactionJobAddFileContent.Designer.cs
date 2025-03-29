@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Budget.Infrastructure.Migrations
 {
-    [DbContext(typeof(BudgetContext))]
+    [DbContext(typeof(BudgetDbContext))]
     [Migration("20250329153207_AlterTransactionJobAddFileContent")]
     partial class AlterTransactionJobAddFileContent
     {
