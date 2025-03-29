@@ -1,7 +1,8 @@
 using Budget.Application.Settings;
-using Budget.Application.UseCases;
+using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain;
 using Budget.Domain.Commands;
+using Budget.Domain.Entities;
 using Budget.Domain.Repositories;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using Xunit;
 
 namespace Budget.UnitTests.UseCases;
 
-public class TransactionsFileJobStartUseCaseTests : IDisposable
+public class TransactionsFileJobStartUseCaseTests
 {
     private readonly ITransactionsFileJobRepository _repo = Substitute.For<ITransactionsFileJobRepository>();
     private readonly IPublishEndpoint _endpoint = Substitute.For<IPublishEndpoint>();
@@ -72,9 +73,8 @@ public class TransactionsFileJobStartUseCaseTests : IDisposable
         Assert.NotNull(capturedJob);
         Assert.NotEqual(Guid.Empty, capturedJob.Id);
         Assert.Equal(testTime, capturedJob.CreatedAt, TimeSpan.FromMilliseconds(100));
-        Assert.NotNull(capturedJob.StoredFilePath);
+        Assert.True(capturedJob.FileContent.SequenceEqual(validFile.Content));
         Assert.Equal("valid.csv", capturedJob.OriginalFileName);
-        Assert.True(File.Exists(Path.Combine(_fileSettings.BasePath!, capturedJob.StoredFilePath)));
     }
 
     [Fact]
@@ -97,11 +97,5 @@ public class TransactionsFileJobStartUseCaseTests : IDisposable
         // Assert
         Assert.True(result.IsFailure);
         Assert.Contains("File size exceeds maximum", result.Error);
-    }
-
-    public void Dispose()
-    {
-        if (_fileSettings.BasePath != null && Path.Exists(_fileSettings.BasePath))
-            Directory.Delete(_fileSettings.BasePath, true);
     }
 }

@@ -1,6 +1,5 @@
 using Budget.Api.Controllers;
 using Budget.Api.Models;
-using Budget.Application.UseCases;
 using Budget.Domain.Contracts;
 using Budget.Domain.Entities;
 using Budget.Infrastructure.Database;
@@ -8,6 +7,7 @@ using Budget.Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using System.Net;
+using Budget.Application.UseCases.TransactionsFileJobStart;
 
 namespace Budget.IntegrationTests.ApiTests
 {

@@ -1,4 +1,5 @@
 using Budget.Domain;
+using Budget.Domain.Entities;
 using Budget.Domain.Repositories;
 
 namespace Budget.Infrastructure.Database.Repositories;

@@ -1,3 +1,5 @@
+using Budget.Domain.Entities;
+
 namespace Budget.Domain.Repositories;
 
 public interface ITransactionsFileJobRepository : IRepository

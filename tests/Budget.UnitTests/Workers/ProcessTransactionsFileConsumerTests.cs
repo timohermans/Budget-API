@@ -1,8 +1,7 @@
-using Budget.Application.Interfaces;
-using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileEtl;
 using Budget.Domain;
 using Budget.Domain.Commands;
+using Budget.Domain.Entities;
 using Budget.Domain.Enums;
 using Budget.Domain.Repositories;
 using Budget.Worker.Consumers;
@@ -18,14 +17,12 @@ namespace Budget.UnitTests.Workers
         private readonly ITransactionsFileJobRepository repoMock;
         private readonly ITransactionsFileEtlUseCase useCaseMock;
         private readonly ILogger<ProcessTransactionsFile> loggerMock;
-        private readonly IFileSystem fileSystemMock;
-        private readonly FileStorageSettings fileStorageSettings;
         private readonly ConsumeContext<ProcessTransactionsFile> contextMock;
-        private readonly TransactionsFileJob job = new TransactionsFileJob
+        private readonly TransactionsFileJob job = new()
         {
             Id = Guid.NewGuid(),
             Status = JobStatus.Pending,
-            StoredFilePath = "file.txt",
+            FileContent = new byte[1000],
             OriginalFileName = "file.txt"
         };
 
@@ -35,52 +32,14 @@ namespace Budget.UnitTests.Workers
             repoMock = Substitute.For<ITransactionsFileJobRepository>();
             useCaseMock = Substitute.For<ITransactionsFileEtlUseCase>();
             loggerMock = Substitute.For<ILogger<ProcessTransactionsFile>>();
-            fileSystemMock = Substitute.For<IFileSystem>();
             contextMock = Substitute.For<ConsumeContext<ProcessTransactionsFile>>();
-
-            fileStorageSettings = new FileStorageSettings { BasePath = "/test/base/path" };
-            fileSystemMock.FileExists(Arg.Any<string>()).Returns(true);
         }
 
         private ProcessTransactionsFileConsumer CreateConsumer()
         {
             repoMock.GetByIdAsync(Arg.Any<Guid>()).Returns(job);
             contextMock.Message.Returns(new ProcessTransactionsFile { JobId = job.Id });
-            return new ProcessTransactionsFileConsumer(repoMock, useCaseMock, loggerMock, fileStorageSettings, fileSystemMock);
-        }
-
-        [Fact]
-        public async Task Consume_FileNotOnDisk_FailsAndSavesErrorInDb()
-        {
-            // Arrange
-            fileSystemMock.FileExists(Arg.Any<string>()).Returns(false);
-
-            var consumer = CreateConsumer();
-
-            // Act
-            await consumer.Consume(contextMock);
-
-            // Assert
-            var expectedFilePath = Path.Combine(fileStorageSettings.BasePath!, job.StoredFilePath);
-            Assert.Equal(JobStatus.Failed, job.Status);
-            Assert.Equal($"File {expectedFilePath} does not exist", job.ErrorMessage);
-        }
-
-
-        [Fact]
-        public async Task Consume_FileOnDisk_UsesCorrectPath()
-        {
-            // Arrange
-            useCaseMock.HandleAsync(Arg.Any<Stream>()).Returns(Result.Success());
-            var consumer = CreateConsumer();
-
-            // Act
-            await consumer.Consume(contextMock);
-
-            // Assert
-            var expectedFilePath = Path.Combine(fileStorageSettings.BasePath!, job.StoredFilePath);
-            fileSystemMock.Received().FileExists(expectedFilePath);
-            fileSystemMock.Received().OpenRead(expectedFilePath);
+            return new ProcessTransactionsFileConsumer(repoMock, useCaseMock, loggerMock);
         }
 
         [Fact]

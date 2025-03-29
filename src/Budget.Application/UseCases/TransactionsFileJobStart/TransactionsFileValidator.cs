@@ -2,7 +2,7 @@ using Budget.Application.Settings;
 using Budget.Domain;
 using Microsoft.Extensions.Logging;
 
-namespace Budget.Application.UseCases;
+namespace Budget.Application.UseCases.TransactionsFileJobStart;
 
 public class TransactionsFileValidator(FileStorageSettings settings, ILogger logger)
 {

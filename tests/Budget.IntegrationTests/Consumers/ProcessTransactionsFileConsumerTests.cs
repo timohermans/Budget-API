@@ -1,8 +1,8 @@
-using Budget.Application.Interfaces;
 using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileEtl;
 using Budget.Domain;
 using Budget.Domain.Commands;
+using Budget.Domain.Entities;
 using Budget.Domain.Enums;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
@@ -24,7 +24,7 @@ namespace Budget.IntegrationTests.Consumers
         {
             Id = Guid.NewGuid(),
             Status = JobStatus.Pending,
-            StoredFilePath = "./Data/transactions-1.csv",
+            FileContent = File.ReadAllBytes("./Data/transactions-1.csv"),
             OriginalFileName = "transactions-1.csv"
         };
 
@@ -33,7 +33,6 @@ namespace Budget.IntegrationTests.Consumers
             _fixture = fixture;
             loggerMock = NullLogger<ProcessTransactionsFile>.Instance;
             contextMock = Substitute.For<ConsumeContext<ProcessTransactionsFile>>();
-
             fileStorageSettings = fixture.FileStorageSettings;
         }
 
@@ -42,9 +41,8 @@ namespace Budget.IntegrationTests.Consumers
             var repo = new TransactionsFileJobRepository(dbContext);
             var transactionRepo = new TransactionRepository(dbContext);
             var useCase = new TransactionsFileEtlUseCase(transactionRepo, NullLogger<TransactionsFileEtlUseCase>.Instance);
-            var fileSystem = new FileSystem();
             contextMock.Message.Returns(new ProcessTransactionsFile { JobId = job.Id });
-            return new ProcessTransactionsFileConsumer(repo, useCase, loggerMock, fileStorageSettings, fileSystem);
+            return new ProcessTransactionsFileConsumer(repo, useCase, loggerMock);
         }
 
         [Fact]

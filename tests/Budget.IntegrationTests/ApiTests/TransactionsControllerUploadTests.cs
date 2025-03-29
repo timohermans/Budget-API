@@ -1,5 +1,5 @@
 using Budget.Api.Controllers;
-using Budget.Application.UseCases;
+using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Domain.Commands;
 using Budget.Domain.Repositories;
 using Budget.Infrastructure.Database.Repositories;
@@ -52,8 +52,7 @@ public class TransactionsControllerUploadTests(TestDatabaseFixture fixture) : IC
                 Arg.Any<CancellationToken>());
         Assert.Null(job.ErrorMessage);
         Assert.Equal("transactions.csv", job.OriginalFileName);
-        Assert.True(File.Exists(Path.Combine(fixture.FileStorageSettings.BasePath!, job.StoredFilePath)));
-        File.Delete(Path.Combine(fixture.FileStorageSettings.BasePath!, job.StoredFilePath));
+        Assert.True(fileStream.ToArray().SequenceEqual(job.FileContent));
         Assert.NotNull(publishedMessage);
         Assert.Equivalent(new ProcessTransactionsFile { JobId = job.Id }, publishedMessage);
     }

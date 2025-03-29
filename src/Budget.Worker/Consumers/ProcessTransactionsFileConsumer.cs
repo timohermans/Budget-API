@@ -1,5 +1,3 @@
-using Budget.Application.Interfaces;
-using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileEtl;
 using Budget.Domain.Commands;
 using Budget.Domain.Enums;
@@ -11,9 +9,7 @@ namespace Budget.Worker.Consumers;
 public class ProcessTransactionsFileConsumer(
     ITransactionsFileJobRepository repo,
     ITransactionsFileEtlUseCase useCase,
-    ILogger<ProcessTransactionsFile> logger,
-    FileStorageSettings fileStorageSettings,
-    IFileSystem fileSystem)
+    ILogger<ProcessTransactionsFile> logger)
     : IConsumer<ProcessTransactionsFile>
 {
     public async Task Consume(ConsumeContext<ProcessTransactionsFile> context)
@@ -27,20 +23,18 @@ public class ProcessTransactionsFileConsumer(
             return;
         }
 
-        var filePathAbsolute = Path.Combine(fileStorageSettings.BasePath ?? "/", job.StoredFilePath);
-
         job.Status = JobStatus.Processing;
         await repo.SaveChangesAsync();
 
-        if (!fileSystem.FileExists(filePathAbsolute))
+        if (job.FileContent.Length == 0)
         {
             job.Status = JobStatus.Failed;
-            job.ErrorMessage = $"File {filePathAbsolute} does not exist";
+            job.ErrorMessage = "File content is empty";
             await repo.SaveChangesAsync();
             return;
         }
 
-        await using var fileStream = fileSystem.OpenRead(filePathAbsolute);
+        await using var fileStream = new MemoryStream(job.FileContent);
 
         var result = await useCase.HandleAsync(fileStream);
 

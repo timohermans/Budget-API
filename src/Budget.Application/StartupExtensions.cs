@@ -1,5 +1,4 @@
 using System.Reflection;
-using Budget.Application.Interfaces;
 using Budget.Application.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +27,6 @@ public static class StartupExtensions
         if (!fileSettings.IsValid) throw new InvalidOperationException("FileSettings are not valid");
 
         services.AddSingleton(fileSettings);
-        services.AddSingleton<IFileSystem, FileSystem>();
         services.AddSingleton(TimeProvider.System);
     }
 }
