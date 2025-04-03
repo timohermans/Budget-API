@@ -9,6 +9,8 @@ using Testcontainers.PostgreSql;
 
 namespace Budget.IntegrationTests;
 
+// TODO: Implement WebApplicationFactory for real integrations tests
+
 
 public class TestDatabaseFixture : IAsyncLifetime
 {
