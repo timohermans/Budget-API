@@ -35,7 +35,7 @@ public class TransactionsFileJobStartUseCase(
 
     public class Response
     {
-        public int JobId { get; set; }
+        public Guid JobId { get; set; }
     }
 
     public async Task<Result<Response>> HandleAsync(Command command)
@@ -64,6 +64,9 @@ public class TransactionsFileJobStartUseCase(
             JobId = job.Id
         });
 
-        return Result<Response>.Success(new Response());
+        return Result<Response>.Success(new Response
+        {
+            JobId = job.Id
+        });
     }
 }

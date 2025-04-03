@@ -13,5 +13,5 @@ public class Transaction
     public string? IbanOtherParty { get; init; }
     public string? AuthorizationCode { get; init; }
     public string? Description { get; init; }
-    public DateOnly? CashbackForDate { get; init; }
+    public DateOnly? CashbackForDate { get; set; }
 }

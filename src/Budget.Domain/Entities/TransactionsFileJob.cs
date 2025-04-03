@@ -9,6 +9,6 @@ public class TransactionsFileJob
     public required byte[] FileContent { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ProcessedAt { get; set; }
-    public JobStatus Status { get; set; } = JobStatus.Pending; // e.g., "Pending", "Processing", "Completed", "Failed"
+    public JobStatus Status { get; set; } = JobStatus.Pending;
     public string? ErrorMessage { get; set; }
 }

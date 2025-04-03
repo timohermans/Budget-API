@@ -97,4 +97,15 @@ public class TransactionRepository(BudgetDbContext db) : ITransactionRepository
             BalancesPerDate = balancesPerDate
         };
     }
+
+    public async Task<Transaction?> GetByIdAsync(int id)
+    {
+        return await db.Transactions.FindAsync(id);
+    }
+
+    public Transaction Update(Transaction transaction)
+    {
+        var entry = db.Transactions.Update(transaction);
+        return entry.Entity;
+    }
 }

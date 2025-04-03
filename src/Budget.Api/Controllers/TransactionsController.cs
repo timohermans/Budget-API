@@ -1,19 +1,25 @@
 using Budget.Domain.Repositories;
 using Budget.Api.Models;
 using Budget.Application.UseCases.TransactionsFileJobStart;
+using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Budget.Domain.Contracts;
 
 namespace Budget.Api.Controllers;
 
 [Route("[controller]")]
 [ApiController]
 [Authorize]
-public class TransactionsController(ITransactionsFileJobStartUseCase useCase, ITransactionRepository transactionRepository) : ControllerBase
+public class TransactionsController(ITransactionsFileJobStartUseCase useCase, 
+    IUpdateTransactionCashbackDateUseCase updateCashbackDateUseCase,
+    ITransactionRepository transactionRepository) : ControllerBase
 {
     [HttpPost("upload")]
-    [RequestFormLimits(MultipartBodyLengthLimit = 10485760)]
-    public async Task<IActionResult> Upload([FromForm] IFormFile? file)
+    [ProducesResponseType(typeof(TransactionsFileJobStartUseCase.Response), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Upload(IFormFile file)
     {
         if (file == null || file.Length == 0)
         {
@@ -38,10 +44,11 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
             return BadRequest(result.Error);
         }
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<TransactionResponseModel>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTransactions([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
         var transactions = await transactionRepository.GetTransactionsByDateRangeAsync(startDate, endDate, iban);
@@ -64,6 +71,7 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
     }
 
     [HttpGet("ibans")]
+    [ProducesResponseType<IEnumerable<string>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllDistinctIbans()
     {
         var ibans = await transactionRepository.GetAllDistinctIbansAsync();
@@ -72,11 +80,36 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase, IT
     }
 
     [HttpGet("cashflow-per-iban")]
+    [ProducesResponseType<CashflowDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCashflowPerIban([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
         var cashFlowPerIban = await transactionRepository.GetCashFlowPerIbanAsync(startDate, endDate, iban);
 
         return Ok(cashFlowPerIban);
+    }
+
+    [HttpPatch("{id}/cashback-date")]
+    [ProducesResponseType(typeof(UpdateTransactionCashbackDateUseCase.Response), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateCashbackForDate(int id, [FromBody] DateOnly? cashbackForDate)
+    {
+        var command = new UpdateTransactionCashbackDateUseCase.Command
+        {
+            TransactionId = id,
+            CashbackForDate = cashbackForDate
+        };
+
+        var result = await updateCashbackDateUseCase.HandleAsync(command);
+
+        if (result.IsFailure)
+        {
+            return result.Error.Contains("not found") 
+                ? NotFound(result.Error) 
+                : BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 
     private byte[] GetFileBytesFrom(IFormFile file)

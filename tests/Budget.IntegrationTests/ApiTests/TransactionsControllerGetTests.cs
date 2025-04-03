@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using System.Net;
 using Budget.Application.UseCases.TransactionsFileJobStart;
+using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 
 namespace Budget.IntegrationTests.ApiTests
 {
@@ -24,7 +25,7 @@ namespace Budget.IntegrationTests.ApiTests
         {
             var useCase = Substitute.For<ITransactionsFileJobStartUseCase>();
             var transactionRepo = new TransactionRepository(dbContext);
-            return new TransactionsController(useCase, transactionRepo);
+            return new TransactionsController(useCase, new UpdateTransactionCashbackDateUseCase(transactionRepo) ,transactionRepo);
         }
 
         [Fact]

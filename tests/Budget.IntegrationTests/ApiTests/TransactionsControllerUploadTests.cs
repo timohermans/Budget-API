@@ -1,5 +1,6 @@
 using Budget.Api.Controllers;
 using Budget.Application.UseCases.TransactionsFileJobStart;
+using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Budget.Domain.Commands;
 using Budget.Domain.Repositories;
 using Budget.Infrastructure.Database.Repositories;
@@ -32,6 +33,7 @@ public class TransactionsControllerUploadTests(TestDatabaseFixture fixture) : IC
                 fixture.FileStorageSettings,
                 TimeProvider.System
             ),
+            Substitute.For<IUpdateTransactionCashbackDateUseCase>(),
             Substitute.For<ITransactionRepository>());
         var formFile = new FormFile(fileStream, 0, fileStream.Length, "transactions", "transactions.csv")
         {
@@ -47,13 +49,16 @@ public class TransactionsControllerUploadTests(TestDatabaseFixture fixture) : IC
         Assert.Equal(typeof(OkObjectResult), result.GetType());
         Assert.NotNull(job);
         await publishEndpoint.Received()
-            .Publish<
-                ProcessTransactionsFile>(Arg.Any<object>(),
-                Arg.Any<CancellationToken>());
+            .Publish<ProcessTransactionsFile>(Arg.Any<object>(), Arg.Any<CancellationToken>());
         Assert.Null(job.ErrorMessage);
         Assert.Equal("transactions.csv", job.OriginalFileName);
         Assert.True(fileStream.ToArray().SequenceEqual(job.FileContent));
         Assert.NotNull(publishedMessage);
         Assert.Equivalent(new ProcessTransactionsFile { JobId = job.Id }, publishedMessage);
+        var okResult = result as OkObjectResult;
+        Assert.NotNull(okResult);
+        var response = okResult.Value as dynamic;
+        Assert.NotNull(response);
+        Assert.Equal(job.Id, (Guid)response?.JobId);
     }
 }

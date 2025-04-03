@@ -1,5 +1,6 @@
 using Budget.Api.Controllers;
 using Budget.Application.UseCases.TransactionsFileJobStart;
+using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Budget.Domain;
 using Budget.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,7 @@ public class TransactionsControllerTests
     public TransactionsControllerTests()
     {
         _useCaseSubstitute = Substitute.For<ITransactionsFileJobStartUseCase>();
-        _controller = new TransactionsController(_useCaseSubstitute, Substitute.For<ITransactionRepository>());
+        _controller = new TransactionsController(_useCaseSubstitute, Substitute.For<IUpdateTransactionCashbackDateUseCase>(), Substitute.For<ITransactionRepository>());
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public class TransactionsControllerTests
             .Returns(Task.FromResult(Result<TransactionsFileJobStartUseCase.Response>.Success(
                 new TransactionsFileJobStartUseCase.Response
                 {
-                    JobId = 1,
+                    JobId = Guid.NewGuid(),
                 })));
 
         // Act

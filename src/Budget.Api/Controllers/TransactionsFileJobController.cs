@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Budget.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TransactionsFileJobController : ControllerBase
 {
     private readonly ITransactionsFileJobRepository _repository;
@@ -16,6 +16,7 @@ public class TransactionsFileJobController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [ProducesResponseType<TransactionsFileJobResponseModel>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var job = await _repository.GetByIdAsync(id);
