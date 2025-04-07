@@ -14,9 +14,9 @@ using NSubstitute;
 
 namespace Budget.IntegrationTests.Consumers
 {
-    public class ProcessTransactionsFileConsumerTests : IClassFixture<TestDatabaseFixture>
+    public class ProcessTransactionsFileConsumerTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
-        private readonly TestDatabaseFixture _fixture;
+        private readonly CustomWebApplicationFactory<Program> _fixture;
         private readonly ILogger<ProcessTransactionsFile> loggerMock;
         private readonly FileStorageSettings fileStorageSettings;
         private readonly ConsumeContext<ProcessTransactionsFile> contextMock;
@@ -28,7 +28,7 @@ namespace Budget.IntegrationTests.Consumers
             OriginalFileName = "transactions-1.csv"
         };
 
-        public ProcessTransactionsFileConsumerTests(TestDatabaseFixture fixture)
+        public ProcessTransactionsFileConsumerTests(CustomWebApplicationFactory<Program> fixture)
         {
             _fixture = fixture;
             loggerMock = NullLogger<ProcessTransactionsFile>.Instance;

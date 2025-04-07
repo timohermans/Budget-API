@@ -12,7 +12,7 @@ using NSubstitute;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsControllerPatchTests(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseFixture>
+public class TransactionsControllerPatchTests(CustomWebApplicationFactory<Program> fixture) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     [Fact]
     public async Task UpdateCashbackForDate_ShouldUpdateDateForCashback()

@@ -13,7 +13,7 @@ using NSubstitute;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsControllerUploadTests(TestDatabaseFixture fixture) : IClassFixture<TestDatabaseFixture>
+public class TransactionsControllerUploadTests(CustomWebApplicationFactory<Program> fixture) : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     [Fact]
     public async Task Upload_CorrectFile_SavesCorrectly()

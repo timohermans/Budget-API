@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsFileJobControllerTests : IClassFixture<TestDatabaseFixture>
+public class TransactionsFileJobControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
 {
-    private readonly TestDatabaseFixture _fixture;
+    private readonly CustomWebApplicationFactory<Program> _fixture;
 
-    public TransactionsFileJobControllerTests(TestDatabaseFixture fixture)
+    public TransactionsFileJobControllerTests(CustomWebApplicationFactory<Program> fixture)
     {
         _fixture = fixture;
     }
