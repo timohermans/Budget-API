@@ -1,19 +1,17 @@
 using Budget.Api.Controllers;
 using Budget.Api.Models;
 using Budget.Domain.Entities;
-using Budget.Infrastructure;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Xunit;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsFileJobControllerTests : IClassFixture<CustomWebApplicationFactory<Program>>
+public class TransactionsFileJobControllerTests : IClassFixture<DatabaseAssemblyFixture>
 {
-    private readonly CustomWebApplicationFactory<Program> _fixture;
+    private readonly DatabaseAssemblyFixture _fixture;
 
-    public TransactionsFileJobControllerTests(CustomWebApplicationFactory<Program> fixture)
+    public TransactionsFileJobControllerTests(DatabaseAssemblyFixture fixture)
     {
         _fixture = fixture;
     }

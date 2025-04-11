@@ -1,5 +1,4 @@
 using System.Data.Common;
-using Budget.Application.Settings;
 using Budget.Infrastructure.Database;
 using Budget.IntegrationTests;
 using Microsoft.AspNetCore.Authentication;
@@ -7,65 +6,51 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.PostgreSql;
+using Npgsql;
 
-[assembly: AssemblyFixture(typeof(CustomWebApplicationFactory<Program>))]
+[assembly: AssemblyFixture(typeof(DatabaseAssemblyFixture))]
 
 namespace Budget.IntegrationTests;
-
-// TODO: Implement WebApplicationFactory for real integrations tests
 
 /// <summary>
 /// Usage of the factory: https://github.com/dotnet/AspNetCore.Docs.Samples/blob/main/test/integration-tests/9.x/IntegrationTestsSample/tests/RazorPagesProject.Tests/IntegrationTests/IndexPageTests.cs
 /// </summary>
 /// <typeparam name="TProgram"></typeparam>
-public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram>, IAsyncLifetime where TProgram : class
+public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
-    private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
+    private readonly string _connectionString;
 
-    public FileStorageSettings FileStorageSettings { get; }
-    public Action<BudgetDbContext>? DbInitAction;
-
-    public BudgetDbContext CreateContext()
+    private CustomWebApplicationFactory(string connectionString)
     {
-        var db = new BudgetDbContext(
-            new DbContextOptionsBuilder<BudgetDbContext>()
-                .UseNpgsql(_postgreSqlContainer.GetConnectionString())
-                .Options);
-        return db;
+        _connectionString = connectionString;
     }
 
-
-    public CustomWebApplicationFactory()
+    public static async Task<CustomWebApplicationFactory<TProgram>> CreateApiClientAsync(string? connectionString, string testName, CancellationToken? cancellationToken = null)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Development.json")
-            .Build();
+        // postgres table is max 63 chars, without giving errors. Guid makes sure db names are unique if I'd use xunit theories
+        var dbName = $"{testName.Substring(0, 27)}_{Guid.NewGuid().ToString().Replace("-", "_")}".ToLower();
+        await using var connection = new NpgsqlConnection(connectionString);
+        await connection.OpenAsync(cancellationToken ?? CancellationToken.None);
+        using var command = new NpgsqlCommand($"Create database {dbName}", connection);
+        await command.ExecuteNonQueryAsync(cancellationToken ?? CancellationToken.None);
 
-        FileStorageSettings = configuration.GetSection("FileStorage").Get<FileStorageSettings>() ?? throw new InvalidOperationException();
-    }
-
-    public async ValueTask InitializeAsync()
-    {
-        await _postgreSqlContainer.StartAsync();
-        await using (var context = CreateContext())
+        var apiConnectionString = new NpgsqlConnectionStringBuilder(connectionString)
         {
-            await context.Database.EnsureCreatedAsync();
-            await SeedDataAsync(context);
-            await context.SaveChangesAsync();
-        }
-    }
+            Database = dbName
+        }.ToString();
 
-    public Task SeedDataAsync(BudgetDbContext context)
-    {
-        // Fill when necessary
-        // context.AddRange(
-        //     new Blog { Name = "Blog1", Url = "http://blog1.com" },
-        //     new Blog { Name = "Blog2", Url = "http://blog2.com" });
-        return Task.CompletedTask;
+        await using var context = new BudgetDbContext(
+          new DbContextOptionsBuilder<BudgetDbContext>()
+              .UseNpgsql(apiConnectionString)
+              .Options);
+
+        await context.Database.MigrateAsync(cancellationToken ?? CancellationToken.None);
+        // future seeding
+        await context.SaveChangesAsync(cancellationToken ?? CancellationToken.None);
+
+        var factory = new CustomWebApplicationFactory<TProgram>(apiConnectionString);
+        return factory;
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -84,12 +69,19 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
             if (dbConnectionDescriptor != null) services.Remove(dbConnectionDescriptor);
 
-            services.AddScoped(_ =>
+            // Create open Postgres Connection so EF won't automatically close it.
+            services.AddSingleton<DbConnection>(container =>
             {
-                var db = CreateContext();
-                db.Database.BeginTransaction();
-                DbInitAction?.Invoke(db);
-                return db;
+                var connection = new NpgsqlConnection(_connectionString);
+                connection.Open();
+
+                return connection;
+            });
+
+            services.AddDbContext<BudgetDbContext>((container, options) =>
+            {
+                var connection = container.GetRequiredService<DbConnection>();
+                options.UseNpgsql(connection);
             });
 
             services.AddAuthentication(options =>
@@ -102,10 +94,5 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
         });
 
         builder.UseEnvironment("Development");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _postgreSqlContainer.DisposeAsync();
     }
 }

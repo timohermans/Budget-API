@@ -1,6 +1,5 @@
 using Budget.Application.Settings;
 using Budget.Application.UseCases.TransactionsFileJobStart;
-using Budget.Domain;
 using Budget.Domain.Commands;
 using Budget.Domain.Entities;
 using Budget.Domain.Repositories;

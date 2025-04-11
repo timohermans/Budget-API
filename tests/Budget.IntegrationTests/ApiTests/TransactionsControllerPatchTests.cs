@@ -4,15 +4,12 @@ using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Budget.Domain.Entities;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
-using Castle.Core.Logging;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace Budget.IntegrationTests.ApiTests;
 
-public class TransactionsControllerPatchTests(CustomWebApplicationFactory<Program> fixture) : IClassFixture<CustomWebApplicationFactory<Program>>
+public class TransactionsControllerPatchTests(DatabaseAssemblyFixture fixture) : IClassFixture<DatabaseAssemblyFixture>
 {
     [Fact]
     public async Task UpdateCashbackForDate_ShouldUpdateDateForCashback()

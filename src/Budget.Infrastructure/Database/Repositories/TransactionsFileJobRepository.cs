@@ -1,4 +1,3 @@
-using Budget.Domain;
 using Budget.Domain.Entities;
 using Budget.Domain.Repositories;
 
