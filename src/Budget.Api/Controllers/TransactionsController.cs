@@ -92,15 +92,15 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
     [ProducesResponseType(typeof(UpdateTransactionCashbackDateUseCase.Response), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> UpdateCashbackForDate(int id, [FromBody] DateOnly? cashbackForDate)
+    public async Task<IActionResult> UpdateCashbackForDate(int id, [FromBody] TransactionPatchCashbackDateCommandModel command)
     {
-        var command = new UpdateTransactionCashbackDateUseCase.Command
+        var useCaseCommand = new UpdateTransactionCashbackDateUseCase.Command
         {
             TransactionId = id,
-            CashbackForDate = cashbackForDate
+            CashbackForDate = command.CashbackForDate
         };
 
-        var result = await updateCashbackDateUseCase.HandleAsync(command);
+        var result = await updateCashbackDateUseCase.HandleAsync(useCaseCommand);
 
         if (result.IsFailure)
         {

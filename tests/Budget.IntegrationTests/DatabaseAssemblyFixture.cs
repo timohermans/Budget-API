@@ -10,13 +10,19 @@ using Testcontainers.PostgreSql;
 
 namespace Budget.IntegrationTests;
 
-public class Sut(BudgetDbContext Db, HttpClient Client, ServiceProvider Services) : IDisposable
+public class Sut(BudgetDbContext Db, HttpClient Client, IServiceScope scope) : IAsyncDisposable
 {
-    public void Dispose()
+    public void Deconstruct(out HttpClient client, out BudgetDbContext db)
     {
-        Services.Dispose();
-        Db.Dispose();
+        client = Client;
+        db = Db;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await Db.DisposeAsync();
         Client.Dispose();
+        scope.Dispose();
     }
 }
 
@@ -34,6 +40,16 @@ public class DatabaseAssemblyFixture : IAsyncLifetime
                 .UseNpgsql(_postgreSqlContainer.GetConnectionString())
                 .Options);
         return db;
+    }
+
+    public async Task<Sut> CreateApiApp(string testName, CancellationToken token = default)
+    {
+        var clientFactory = await CustomWebApplicationFactory<Program>.CreateApiClientAsync(ConnectionString, testName, token);
+        var scope = clientFactory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
+        var client = clientFactory.CreateClient();
+
+        return new Sut(db, client, scope);
     }
 
     public DatabaseAssemblyFixture()
