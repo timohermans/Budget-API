@@ -4,6 +4,7 @@ using Budget.Domain.Entities;
 using Budget.Infrastructure.Database;
 using Budget.Infrastructure.Database.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Json;
 
 namespace Budget.IntegrationTests.ApiTests;
 
@@ -16,22 +17,19 @@ public class TransactionsFileJobControllerTests : IClassFixture<DatabaseAssembly
         _fixture = fixture;
     }
 
-    private TransactionsFileJobController CreateController(BudgetDbContext dbContext)
-    {
-        var repository = new TransactionsFileJobRepository(dbContext);
-        return new TransactionsFileJobController(repository);
-    }
-
     [Fact]
     public async Task GetById_ReturnsOk_WhenJobExists()
     {
         // Arrange
-        await using var db = _fixture.CreateContext();
-        await db.Database.BeginTransactionAsync(TestContext.Current.CancellationToken);
+        var jobId = Guid.NewGuid();
+        await using var app = await _fixture.CreateApiApp(
+            nameof(GetById_ReturnsOk_WhenJobExists),
+            TestContext.Current.CancellationToken);
+        var (client, db) = app;
 
         var job = new TransactionsFileJob
         {
-            Id = Guid.NewGuid(),
+            Id = jobId,
             FileContent = [1, 2, 3, 4],
             OriginalFileName = "TestFile.csv",
             CreatedAt = DateTime.UtcNow,
@@ -39,16 +37,14 @@ public class TransactionsFileJobControllerTests : IClassFixture<DatabaseAssembly
         };
         db.TransactionsFileJobs.Add(job);
         await db.SaveChangesAsync(TestContext.Current.CancellationToken);
-        db.ChangeTracker.Clear();
-
-        var controller = CreateController(db);
 
         // Act
-        var result = await controller.GetById(job.Id);
+        var response = await client.GetAsync($"/TransactionsFileJob/{jobId}", TestContext.Current.CancellationToken);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var responseModel = Assert.IsType<TransactionsFileJobResponseModel>(okResult.Value);
+        response.EnsureSuccessStatusCode();
+        var responseModel = await response.Content.ReadFromJsonAsync<TransactionsFileJobResponseModel>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(responseModel);
         Assert.Equal(job.Id, responseModel.Id);
         Assert.Equal(job.OriginalFileName, responseModel.OriginalFileName);
         Assert.Equal("Pending", responseModel.Status);
@@ -58,15 +54,16 @@ public class TransactionsFileJobControllerTests : IClassFixture<DatabaseAssembly
     public async Task GetById_ReturnsNotFound_WhenJobDoesNotExist()
     {
         // Arrange
-        await using var db = _fixture.CreateContext();
-        await db.Database.BeginTransactionAsync(TestContext.Current.CancellationToken);
-
-        var controller = CreateController(db);
+        await using var app = await _fixture.CreateApiApp(
+            nameof(GetById_ReturnsNotFound_WhenJobDoesNotExist),
+            null,
+            TestContext.Current.CancellationToken);
+        var (client, _) = app;
 
         // Act
-        var result = await controller.GetById(Guid.NewGuid());
+        var response = await client.GetAsync($"/TransactionsFileJob/{Guid.NewGuid()}", TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
 }
