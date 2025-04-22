@@ -32,7 +32,7 @@ public class TransactionsFileJobControllerTests : IClassFixture<DatabaseAssembly
         var job = new TransactionsFileJob
         {
             Id = Guid.NewGuid(),
-            FileContent = new byte[] { 1, 2, 3, 4 },
+            FileContent = [1, 2, 3, 4],
             OriginalFileName = "TestFile.csv",
             CreatedAt = DateTime.UtcNow,
             Status = Domain.Enums.JobStatus.Pending

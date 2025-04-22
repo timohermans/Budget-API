@@ -1,6 +1,7 @@
 using Budget.Application.Settings;
 using Budget.Infrastructure.Database;
 using Budget.IntegrationTests;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,12 +43,21 @@ public class DatabaseAssemblyFixture : IAsyncLifetime
         return db;
     }
 
-    public async Task<Sut> CreateApiApp(string testName, CancellationToken token = default)
+    public Task<Sut> CreateApiApp(string testName, CancellationToken token = default) => CreateApiApp(testName, null, token);
+
+    public async Task<Sut> CreateApiApp(string testName, Action<IServiceCollection>? configureTestServicesFn = null, CancellationToken token = default)
     {
         var clientFactory = await CustomWebApplicationFactory<Program>.CreateApiClientAsync(ConnectionString, testName, token);
         var scope = clientFactory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
-        var client = clientFactory.CreateClient();
+        var client = clientFactory
+            .WithWebHostBuilder(builder =>
+            {
+                if (configureTestServicesFn != null) {
+                    builder.ConfigureTestServices(configureTestServicesFn);
+                }
+            })
+            .CreateClient();
 
         return new Sut(db, client, scope);
     }
