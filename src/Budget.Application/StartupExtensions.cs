@@ -1,7 +1,7 @@
-using System.Reflection;
 using Budget.Application.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Budget.Application;
 

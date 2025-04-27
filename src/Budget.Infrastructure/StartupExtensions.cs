@@ -1,9 +1,9 @@
-using System.Reflection;
 using Budget.Infrastructure.Database;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Budget.Infrastructure;
 

@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Budget.Infrastructure.Database;
 using Budget.IntegrationTests;
 using Microsoft.AspNetCore.Authentication;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using System.Data.Common;
 
 [assembly: AssemblyFixture(typeof(DatabaseAssemblyFixture))]
 

@@ -1,6 +1,6 @@
-using System.Reflection;
 using Budget.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Budget.Infrastructure.Database;
 
