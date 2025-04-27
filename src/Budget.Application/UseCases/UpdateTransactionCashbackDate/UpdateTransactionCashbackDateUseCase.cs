@@ -20,14 +20,14 @@ public class UpdateTransactionCashbackDateUseCase : IUpdateTransactionCashbackDa
     public async Task<Result<Response>> HandleAsync(Command command)
     {
         var transaction = await _transactionRepository.GetByIdAsync(command.TransactionId);
-        
+
         if (transaction == null)
         {
             return Result<Response>.Failure($"Transaction with ID {command.TransactionId} not found.");
         }
 
         transaction.CashbackForDate = command.CashbackForDate;
-        
+
         _transactionRepository.Update(transaction);
         await _transactionRepository.SaveChangesAsync();
 

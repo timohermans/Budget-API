@@ -1,15 +1,9 @@
-using Budget.Api.Controllers;
 using Budget.Application.UseCases.TransactionsFileJobStart;
-using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Budget.Domain.Commands;
-using Budget.Domain.Repositories;
-using Budget.Infrastructure.Database.Repositories;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;

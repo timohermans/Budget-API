@@ -1,9 +1,5 @@
-using Budget.Api.Controllers;
 using Budget.Api.Models;
 using Budget.Domain.Entities;
-using Budget.Infrastructure.Database;
-using Budget.Infrastructure.Database.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 
 namespace Budget.IntegrationTests.ApiTests;

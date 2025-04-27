@@ -4,8 +4,8 @@ namespace Budget.Api.Models;
 
 public class TransactionsFileJobResponseModel
 {
-    public Guid Id { get; set;  }
-    public string? OriginalFileName { get; set;  }
+    public Guid Id { get; set; }
+    public string? OriginalFileName { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ProcessedAt { get; set; }
     public string? Status { get; set; }

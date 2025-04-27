@@ -1,8 +1,6 @@
 using Budget.Api.Models;
 using Budget.Domain.Contracts;
 using Budget.Domain.Entities;
-using Budget.Infrastructure.Database;
-using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 
 namespace Budget.IntegrationTests.ApiTests;

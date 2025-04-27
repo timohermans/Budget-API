@@ -11,7 +11,7 @@ namespace Budget.Api.Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize]
-public class TransactionsController(ITransactionsFileJobStartUseCase useCase, 
+public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
     IUpdateTransactionCashbackDateUseCase updateCashbackDateUseCase,
     ITransactionRepository transactionRepository) : ControllerBase
 {
@@ -104,8 +104,8 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
 
         if (result.IsFailure)
         {
-            return result.Error.Contains("not found") 
-                ? NotFound(result.Error) 
+            return result.Error.Contains("not found")
+                ? NotFound(result.Error)
                 : BadRequest(result.Error);
         }
 

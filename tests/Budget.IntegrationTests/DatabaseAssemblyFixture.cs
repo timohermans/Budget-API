@@ -27,7 +27,7 @@ public class Sut(BudgetDbContext Db, HttpClient Client, IServiceScope scope) : I
     }
 }
 
-public class DatabaseAssemblyFixture : IAsyncLifetime 
+public class DatabaseAssemblyFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder().Build();
 
@@ -53,7 +53,8 @@ public class DatabaseAssemblyFixture : IAsyncLifetime
         var client = clientFactory
             .WithWebHostBuilder(builder =>
             {
-                if (configureTestServicesFn != null) {
+                if (configureTestServicesFn != null)
+                {
                     builder.ConfigureTestServices(configureTestServicesFn);
                 }
             })

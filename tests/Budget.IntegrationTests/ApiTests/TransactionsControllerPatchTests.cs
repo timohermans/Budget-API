@@ -1,12 +1,5 @@
-using Budget.Api.Controllers;
-using Budget.Application.UseCases.TransactionsFileJobStart;
 using Budget.Application.UseCases.UpdateTransactionCashbackDate;
 using Budget.Domain.Entities;
-using Budget.Infrastructure.Database;
-using Budget.Infrastructure.Database.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using System.Net.Http.Json;
 
 namespace Budget.IntegrationTests.ApiTests;
@@ -31,25 +24,25 @@ public class TransactionsControllerPatchTests(DatabaseAssemblyFixture fixture) :
             Description = "Test transaction",
             CashbackForDate = null
         };
-        
+
         db.Transactions.Add(transaction);
         await db.SaveChangesAsync(TestContext.Current.CancellationToken);
         db.ChangeTracker.Clear();
 
         var id = transaction.Id;
-        
+
         var newCashbackDate = new DateOnly(2023, 1, 15);
         // Act
-        var result = await client.PatchAsJsonAsync($"/transactions/{id}/cashback-date", new { CashbackForDate = newCashbackDate.ToString("yyyy-MM-dd") }, cancellationToken: TestContext.Current.CancellationToken);       
-        
+        var result = await client.PatchAsJsonAsync($"/transactions/{id}/cashback-date", new { CashbackForDate = newCashbackDate.ToString("yyyy-MM-dd") }, cancellationToken: TestContext.Current.CancellationToken);
+
         // Assert
         result.EnsureSuccessStatusCode();
-        
+
         var response = await result.Content.ReadFromJsonAsync<UpdateTransactionCashbackDateUseCase.Response>(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
         Assert.Equal(response!.Id, id);
         Assert.Equal(newCashbackDate, response.CashbackForDate);
-        
+
         var updatedTransaction = await db.Transactions.FindAsync([id], TestContext.Current.CancellationToken);
         Assert.Equal(newCashbackDate, updatedTransaction!.CashbackForDate);
     }
