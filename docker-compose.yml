@@ -1,6 +1,18 @@
 services:
+  client:
+    image: registry.timo-hermans.nl/budget-next:api-sep-1
+    env_file: ./.env-client
+    ports:
+      - 3000:3000
+    depends_on:
+      postgres:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - budget-network
+
   api:
-    # platform: linux/arm64  # Explicit ARM64 target
     build:
       context: .
       dockerfile: src/Budget.Api/Dockerfile
@@ -21,7 +33,6 @@ services:
       - budget-network
 
   worker:
-    # platform: linux/arm64  # Explicit ARM64 target
     build:
       context: .
       dockerfile: src/Budget.Worker/Dockerfile
