@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: backend
 spec:
   selector:
     matchLabels:
-      app: frontend
+      app: backend
   template:
     metadata:
       labels:
-        app: frontend
+        app: backend
     spec:
       containers:
-        - name: frontend
-          image: registry.timo-hermans.nl/budget-next:api-sep-2
+        - name: backend
+          image: registry.timo-hermans.nl/budget-api:api-sep-1
           envFrom:
             - secretRef:
-                name: frontend-config
+                name: backend-config
           resources:
             requests:
               memory: "128Mi"
@@ -25,6 +25,6 @@ spec:
               memory: "256Mi"
               cpu: "250m"
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
       imagePullSecrets:
         - name: timo-registry-secret
