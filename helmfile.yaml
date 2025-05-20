@@ -1,0 +1,31 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+  - name: sealed-secrets
+    url: https://bitnami-labs.github.io/sealed-secrets
+
+releases:
+  - name: postgres
+    namespace: default
+    chart: bitnami/postgresql
+    version: 16.7.4
+    values:
+      - ./k8s/postgres/values.yaml
+
+  # - name: rabbitmq
+  #   chart: bitnami/rabbitmq
+  #   version: 16.0.2
+    # values:
+    #   - ./k8s/rabbitmq/values.yaml
+
+  - name: nginx-ingress
+    namespace: ingress-nginx
+    chart: ingress-nginx/ingress-nginx
+    version: 4.12.2
+
+  - name: sealed-secrets
+    namespace: kube-system
+    chart: sealed-secrets/sealed-secrets
+    version: 2.13.1

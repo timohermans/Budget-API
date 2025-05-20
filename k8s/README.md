@@ -5,8 +5,16 @@ The cluster right now (for the sealed secrets) resides on my Macbook Pro, as I'm
 ## Resources
 
 - [Helm charts search](https://artifacthub.io/packages/helm/bitnami/postgresql)
+
 ## Commands used
 
+- brew install helmfile
+- brew install kubeseal
+- brew install k9s
+
+- helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
 - helm install postgres bitnami/postgresql -f ./postgres/values.yaml
 
 ## Sealed secrets
