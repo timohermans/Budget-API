@@ -1,0 +1,40 @@
+auth:
+  username: guest
+  password: guest
+
+replicaCount: 1
+
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 250m
+  limits:
+    memory: 1Gi
+    cpu: 500m
+
+persistence:
+  enabled: true
+  storageClass: ""  # leave empty to use default, or set to your own (e.g. "standard")
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
+
+extraPlugins: "rabbitmq_management rabbitmq_peer_discovery_k8s"
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false  # set to true if using Prometheus Operator
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  timeoutSeconds: 10
+  failureThreshold: 6
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 20
+  timeoutSeconds: 5
+  failureThreshold: 6
+

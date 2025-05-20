@@ -16,7 +16,7 @@ spec:
           image: registry.timo-hermans.nl/budget-api:api-sep-1
           envFrom:
             - secretRef:
-                name: backend-config
+                name: backend-secret
           resources:
             requests:
               memory: "128Mi"

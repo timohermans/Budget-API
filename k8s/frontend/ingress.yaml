@@ -4,6 +4,9 @@ metadata:
   name: frontend-ingress
   labels:
     name: frontend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
 spec:
   ingressClassName: nginx
   rules:
