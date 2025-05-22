@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS migrate
+WORKDIR /src
+
+COPY ["src/Budget.Api/Budget.Api.csproj", "src/Budget.Api/"]
+COPY ["src/Budget.Infrastructure/Budget.Infrastructure.csproj", "src/Budget.Infrastructure/"]
+RUN dotnet restore "src/Budget.Api/Budget.Api.csproj"
+
+COPY . .
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+WORKDIR /src/src/Budget.Api
+
+CMD ["dotnet", "ef", "database", "update", "--project", "../Budget.Infrastructure"]
