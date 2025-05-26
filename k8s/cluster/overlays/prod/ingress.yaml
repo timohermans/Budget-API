@@ -2,15 +2,16 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-ingress
+  namespace: budget
   labels:
     name: frontend-ingress
   annotations:
-    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
-    nginx.ingress.kubernetes.io/proxy-buffers-number: "8"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: default
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
-  - host: frontend.budget
+  - host: budget.timo-hermans.nl
     http:
       paths:
       - pathType: Prefix
@@ -20,3 +21,6 @@ spec:
             name: frontend
             port: 
               number: 80
+  tls:
+  - hosts:
+    - budget.timo-hermans.nl

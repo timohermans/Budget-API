@@ -1,0 +1,5 @@
+resources:
+  - ../../backend/
+  - ../../backend/db-migrations/
+  - ../../backend/worker/
+  - ../../frontend/

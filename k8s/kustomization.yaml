@@ -1,7 +1,0 @@
-resources:
-  - helm/postgres/sealed-secret.yaml
-  - cluster/
-  - backend/
-  - backend/db-migrations/
-  - backend/worker/
-  - frontend/

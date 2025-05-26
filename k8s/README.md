@@ -2,6 +2,12 @@
 
 The cluster right now (for the sealed secrets) resides on my Macbook Pro, as I'm just testing right now. Need to move the sealed controller key once I'm going to shift towards my VPS.
 
+## To Improve
+
+- [ ] sealed secret for postgres needs to be applied before anything else
+- [ ] nginx ingress helm chart needs to be removed from base helmfile (because prod doesn't need it)
+
+
 ## Getting started
 
 ```shell
