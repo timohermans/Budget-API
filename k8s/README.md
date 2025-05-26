@@ -111,7 +111,7 @@ WARNING: There are "resources" sections in the chart not set. Using "resourcesPr
 
 NAME: rabbitmq
 LAST DEPLOYED: Tue May 20 21:26:23 2025
-NAMESPACE: default
+namespace: budget
 STATUS: deployed
 REVISION: 1
 TEST SUITE: None
