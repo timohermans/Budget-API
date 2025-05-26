@@ -2,6 +2,16 @@
 
 The cluster right now (for the sealed secrets) resides on my Macbook Pro, as I'm just testing right now. Need to move the sealed controller key once I'm going to shift towards my VPS.
 
+## Getting started
+
+```shell
+cd k8s
+helmfile apply
+kubectl apply -k .
+```
+
+Note that above commands do nothing for the sealed secret private key. You have to apply this from a previous cluster and apply it to the new, and delete the sealed-secret pod, so that it recreates with the new private key.
+
 ## Resources
 
 - [Helm charts search](https://artifacthub.io/packages/helm/bitnami/postgresql)
@@ -29,7 +39,7 @@ You should now be able to create sealed secrets.
 
     kubectl create secret generic secret-name --dry-run=client --from-literal=foo=bar -o [json|yaml] | \
     kubeseal \
-      --controller-name=sealed-secrets-controller \
+      --controller-name=sealed-secrets \
       --controller-namespace=kube-system \
       --format yaml > mysealedsecret.yaml
 

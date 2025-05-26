@@ -17,3 +17,5 @@ spec:
         - configMapRef:
             name: backend-db-migrations-configmap
       restartPolicy: Never
+      imagePullSecrets:
+      - name: timo-registry-secret
