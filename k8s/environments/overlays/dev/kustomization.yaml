@@ -1,3 +1,4 @@
 resources:
   - ../../../cluster/overlays/dev
   - ../../base/
+  - ../../../frontend/overlays/dev

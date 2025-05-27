@@ -1,5 +1,4 @@
 resources:
-  - sealed-secret.yaml
   - config-map.yaml
   - deployment.yaml
   - service.yaml
