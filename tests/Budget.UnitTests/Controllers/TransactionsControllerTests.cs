@@ -25,7 +25,7 @@ public class TransactionsControllerTests
     public async Task Upload_WhenFileIsNull_ReturnsBadRequest()
     {
         // Act
-        var result = await _controller.Upload(null);
+        var result = await _controller.Upload(null!);
 
         // Assert
         var badRequest = Assert.IsType<BadRequestObjectResult>(result);
