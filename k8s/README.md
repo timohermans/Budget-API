@@ -11,7 +11,7 @@ The cluster right now (for the sealed secrets) resides on my Macbook Pro, as I'm
 ## Getting started
 
 ```shell
-cd k8s
+cd k8s/environments/overlays/dev
 helmfile apply
 kubectl apply -k .
 ```
