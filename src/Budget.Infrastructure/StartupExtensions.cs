@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Budget.Infrastructure.Extensions;
 
 namespace Budget.Infrastructure;
 
@@ -13,7 +14,7 @@ public static class StartupExtensions
     {
         services.AddDbContext<BudgetDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetConnectionString("Default"));
+            options.UseNpgsql(configuration.GetConnectionStringFromSection("Database"));
         });
 
         services.AddMassTransit(x =>
