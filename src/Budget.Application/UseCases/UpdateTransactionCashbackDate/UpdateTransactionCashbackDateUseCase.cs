@@ -5,7 +5,19 @@ namespace Budget.Application.UseCases.UpdateTransactionCashbackDate;
 
 public interface IUpdateTransactionCashbackDateUseCase
 {
-    Task<Result<UpdateTransactionCashbackDateUseCase.Response>> HandleAsync(UpdateTransactionCashbackDateUseCase.Command command);
+    Task<Result<UpdateTransactionCashbackDateResponse>> HandleAsync(UpdateTransactionCashbackDateCommand command);
+}
+
+public class UpdateTransactionCashbackDateCommand
+{
+    public int TransactionId { get; set; }
+    public DateOnly? CashbackForDate { get; set; }
+}
+
+public class UpdateTransactionCashbackDateResponse
+{
+    public int Id { get; set; }
+    public DateOnly? CashbackForDate { get; set; }
 }
 
 public class UpdateTransactionCashbackDateUseCase : IUpdateTransactionCashbackDateUseCase
@@ -17,13 +29,13 @@ public class UpdateTransactionCashbackDateUseCase : IUpdateTransactionCashbackDa
         _transactionRepository = transactionRepository;
     }
 
-    public async Task<Result<Response>> HandleAsync(Command command)
+    public async Task<Result<UpdateTransactionCashbackDateResponse>> HandleAsync(UpdateTransactionCashbackDateCommand command)
     {
         var transaction = await _transactionRepository.GetByIdAsync(command.TransactionId);
 
         if (transaction == null)
         {
-            return Result<Response>.Failure($"Transaction with ID {command.TransactionId} not found.");
+            return Result<UpdateTransactionCashbackDateResponse>.Failure($"Transaction with ID {command.TransactionId} not found.");
         }
 
         transaction.CashbackForDate = command.CashbackForDate;
@@ -31,22 +43,11 @@ public class UpdateTransactionCashbackDateUseCase : IUpdateTransactionCashbackDa
         _transactionRepository.Update(transaction);
         await _transactionRepository.SaveChangesAsync();
 
-        return Result<Response>.Success(new Response
+        return Result<UpdateTransactionCashbackDateResponse>.Success(new UpdateTransactionCashbackDateResponse
         {
             Id = transaction.Id,
             CashbackForDate = transaction.CashbackForDate
         });
     }
 
-    public class Command
-    {
-        public int TransactionId { get; set; }
-        public DateOnly? CashbackForDate { get; set; }
-    }
-
-    public class Response
-    {
-        public int Id { get; set; }
-        public DateOnly? CashbackForDate { get; set; }
-    }
 }

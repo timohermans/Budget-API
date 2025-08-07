@@ -38,7 +38,7 @@ public class TransactionsControllerPatchTests(DatabaseAssemblyFixture fixture) :
         // Assert
         result.EnsureSuccessStatusCode();
 
-        var response = await result.Content.ReadFromJsonAsync<UpdateTransactionCashbackDateUseCase.Response>(cancellationToken: TestContext.Current.CancellationToken);
+        var response = await result.Content.ReadFromJsonAsync<UpdateTransactionCashbackDateResponse>(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(response);
         Assert.Equal(response!.Id, id);
         Assert.Equal(newCashbackDate, response.CashbackForDate);

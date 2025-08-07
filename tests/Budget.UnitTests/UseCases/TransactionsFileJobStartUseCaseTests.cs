@@ -23,7 +23,7 @@ public class TransactionsFileJobStartUseCaseTests
     private readonly FileStorageSettings _fileSettings = new FileStorageSettings
     {
         MaxSizeMb = 10,
-        BasePath = @"/Volumes/ssd/Dev/tmp/budget-tests",
+        BasePath = @"./budget-tests",
     };
 
     private TransactionsFileJobStartUseCase CreateSut()
@@ -61,7 +61,7 @@ public class TransactionsFileJobStartUseCaseTests
         };
 
         // Act
-        var result = await sut.HandleAsync(new TransactionsFileJobStartUseCase.Command { File = validFile });
+        var result = await sut.HandleAsync(new TransactionsFileJobStartCommand { File = validFile });
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -91,7 +91,7 @@ public class TransactionsFileJobStartUseCaseTests
         };
 
         // Act
-        var result = await sut.HandleAsync(new TransactionsFileJobStartUseCase.Command { File = invalidFile });
+        var result = await sut.HandleAsync(new TransactionsFileJobStartCommand { File = invalidFile });
 
         // Assert
         Assert.True(result.IsFailure);

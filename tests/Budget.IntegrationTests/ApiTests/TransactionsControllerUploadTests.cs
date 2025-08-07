@@ -41,7 +41,7 @@ public class TransactionsControllerUploadTests(DatabaseAssemblyFixture fixture) 
 
         response.EnsureSuccessStatusCode();
 
-        var jobResponse = await response.Content.ReadFromJsonAsync<TransactionsFileJobStartUseCase.Response>(cancellationToken: TestContext.Current.CancellationToken);
+        var jobResponse = await response.Content.ReadFromJsonAsync<TransactionsFileJobStartResponse>(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(jobResponse);
         var job = await db.TransactionsFileJobs.FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(job);

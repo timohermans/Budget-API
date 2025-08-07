@@ -10,7 +10,7 @@ namespace Budget.Application.UseCases.TransactionsFileJobStart;
 
 public interface ITransactionsFileJobStartUseCase
 {
-    Task<Result<TransactionsFileJobStartUseCase.Response>> HandleAsync(TransactionsFileJobStartUseCase.Command command);
+    Task<Result<TransactionsFileJobStartResponse>> HandleAsync(TransactionsFileJobStartCommand command);
 }
 
 public class TransactionsFileJobStartUseCase(
@@ -28,17 +28,7 @@ public class TransactionsFileJobStartUseCase(
         public long Size { get; init; }
     }
 
-    public class Command
-    {
-        public required FileModel File { get; init; }
-    }
-
-    public class Response
-    {
-        public Guid JobId { get; set; }
-    }
-
-    public async Task<Result<Response>> HandleAsync(Command command)
+    public async Task<Result<TransactionsFileJobStartResponse>> HandleAsync(TransactionsFileJobStartCommand command)
     {
         var fileValidator = new TransactionsFileValidator(fileSettings, logger);
 
@@ -46,7 +36,7 @@ public class TransactionsFileJobStartUseCase(
 
         if (validateResult.IsFailure)
         {
-            return Result<Response>.Failure(validateResult.Error);
+            return Result<TransactionsFileJobStartResponse>.Failure(validateResult.Error);
         }
 
         var job = new TransactionsFileJob
@@ -64,9 +54,19 @@ public class TransactionsFileJobStartUseCase(
             JobId = job.Id
         });
 
-        return Result<Response>.Success(new Response
+        return Result<TransactionsFileJobStartResponse>.Success(new TransactionsFileJobStartResponse
         {
             JobId = job.Id
         });
     }
+}
+
+public class TransactionsFileJobStartCommand
+{
+    public required TransactionsFileJobStartUseCase.FileModel File { get; init; }
+}
+
+public class TransactionsFileJobStartResponse
+{
+    public Guid JobId { get; set; }
 }

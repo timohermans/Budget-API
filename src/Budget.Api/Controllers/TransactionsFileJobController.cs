@@ -15,7 +15,7 @@ public class TransactionsFileJobController : ControllerBase
         _repository = repository;
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetTransactionsFileJob")]
     [ProducesResponseType<TransactionsFileJobResponseModel>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetById(Guid id)
     {

@@ -15,8 +15,8 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
     IUpdateTransactionCashbackDateUseCase updateCashbackDateUseCase,
     ITransactionRepository transactionRepository) : ControllerBase
 {
-    [HttpPost("upload")]
-    [ProducesResponseType(typeof(TransactionsFileJobStartUseCase.Response), StatusCodes.Status200OK)]
+    [HttpPost("upload", Name = "PostTransactionsFile")]
+    [ProducesResponseType(typeof(TransactionsFileJobStartResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Upload(IFormFile file)
@@ -26,7 +26,7 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
             return BadRequest("No file was uploaded.");
         }
 
-        var command = new TransactionsFileJobStartUseCase.Command
+        var command = new TransactionsFileJobStartCommand
         {
             File = new TransactionsFileJobStartUseCase.FileModel
             {
@@ -47,7 +47,7 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
         return Ok(result.Value);
     }
 
-    [HttpGet]
+    [HttpGet(Name = "GetTransactions")]
     [ProducesResponseType(typeof(IEnumerable<TransactionResponseModel>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTransactions([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
@@ -70,7 +70,7 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
         return Ok(response);
     }
 
-    [HttpGet("ibans")]
+    [HttpGet("ibans", Name="GetIbansDistinct")]
     [ProducesResponseType<IEnumerable<string>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllDistinctIbans()
     {
@@ -79,7 +79,7 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
         return Ok(ibans);
     }
 
-    [HttpGet("cashflow-per-iban")]
+    [HttpGet("cashflow-per-iban", Name="GetIbanCashflow")]
     [ProducesResponseType<CashflowDto>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCashflowPerIban([FromQuery] DateOnly startDate, [FromQuery] DateOnly endDate, [FromQuery] string? iban)
     {
@@ -88,13 +88,13 @@ public class TransactionsController(ITransactionsFileJobStartUseCase useCase,
         return Ok(cashFlowPerIban);
     }
 
-    [HttpPatch("{id}/cashback-date")]
-    [ProducesResponseType(typeof(UpdateTransactionCashbackDateUseCase.Response), StatusCodes.Status200OK)]
+    [HttpPatch("{id}/cashback-date", Name = "UpdateCashbackForDate")]
+    [ProducesResponseType(typeof(UpdateTransactionCashbackDateResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateCashbackForDate(int id, [FromBody] TransactionPatchCashbackDateCommandModel command)
     {
-        var useCaseCommand = new UpdateTransactionCashbackDateUseCase.Command
+        var useCaseCommand = new UpdateTransactionCashbackDateCommand
         {
             TransactionId = id,
             CashbackForDate = command.CashbackForDate

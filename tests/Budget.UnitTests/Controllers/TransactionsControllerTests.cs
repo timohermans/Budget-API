@@ -60,9 +60,9 @@ public class TransactionsControllerTests
         fileSubstitute.Length.Returns(ms.Length);
         fileSubstitute.OpenReadStream().Returns(ms);
 
-        _useCaseSubstitute.HandleAsync(Arg.Any<TransactionsFileJobStartUseCase.Command>())
-            .Returns(Task.FromResult(Result<TransactionsFileJobStartUseCase.Response>.Success(
-                new TransactionsFileJobStartUseCase.Response
+        _useCaseSubstitute.HandleAsync(Arg.Any<TransactionsFileJobStartCommand>())
+            .Returns(Task.FromResult(Result<TransactionsFileJobStartResponse>.Success(
+                new TransactionsFileJobStartResponse
                 {
                     JobId = Guid.NewGuid(),
                 })));
@@ -73,7 +73,7 @@ public class TransactionsControllerTests
         // Assert
         Assert.IsType<OkObjectResult>(result);
         await _useCaseSubstitute.Received(1)
-            .HandleAsync(Arg.Is<TransactionsFileJobStartUseCase.Command>(c =>
+            .HandleAsync(Arg.Is<TransactionsFileJobStartCommand>(c =>
                 c.File.FileName == fileName &&
                 c.File.ContentType == "text/csv" &&
                 c.File.Size == ms.Length
@@ -90,8 +90,8 @@ public class TransactionsControllerTests
         fileSubstitute.ContentType.Returns("text/csv");
         fileSubstitute.OpenReadStream().Returns(new MemoryStream());
         var errorMessage = "Processing failed";
-        _useCaseSubstitute.HandleAsync(Arg.Any<TransactionsFileJobStartUseCase.Command>())
-            .Returns(Task.FromResult(Result<TransactionsFileJobStartUseCase.Response>.Failure(errorMessage)));
+        _useCaseSubstitute.HandleAsync(Arg.Any<TransactionsFileJobStartCommand>())
+            .Returns(Task.FromResult(Result<TransactionsFileJobStartResponse>.Failure(errorMessage)));
 
         // Act
         var result = await _controller.Upload(fileSubstitute);
