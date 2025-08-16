@@ -1,3 +1,0 @@
-resources:
-  - config-map.yaml
-  - job.yaml

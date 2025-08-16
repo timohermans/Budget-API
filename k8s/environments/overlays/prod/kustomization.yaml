@@ -1,4 +1,0 @@
-resources:
-  - ../../../cluster/overlays/prod
-  - ../../base/
-  - ../../../frontend/overlays/prod

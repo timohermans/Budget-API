@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-configmap
-  namespace: budget
-data:
-  API_URL: "http://backend-budget"
