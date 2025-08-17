@@ -22,12 +22,7 @@ public static class StartupExtensions
             configureMassTransit?.Invoke(x);
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(configuration.GetValue<string>("MessageBus:Host"), "/", h =>
-                {
-                    h.Username(configuration.GetValue<string>("MessageBus:Username") ?? "guest");
-                    h.Password(configuration.GetValue<string>("MessageBus:Password") ?? "guest");
-                });
-
+                cfg.Host(configuration.GetRabbitMqConnectionString("MessageBus"));
                 cfg.ConfigureEndpoints(context);
             });
         });
