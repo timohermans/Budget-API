@@ -1,20 +1,21 @@
 ﻿using Budget.Infrastructure;
 using Budget.Infrastructure.Database;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 try
 {
-    var config = new ConfigurationBuilder()
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        .AddEnvironmentVariables()
-        .Build();
-    var services = new ServiceCollection();
-
+    var builder = WebApplication.CreateBuilder();
+    var config = builder.Configuration;
+    var services = builder.Services;
+    
     services.AddInfrastructure(config);
 
-    using var scope = services.BuildServiceProvider().CreateScope();
+    var app = builder.Build();
+
+    using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
     await context.Database.MigrateAsync();
     Console.WriteLine("Migrations applied successfully");
