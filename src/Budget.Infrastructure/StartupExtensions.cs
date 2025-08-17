@@ -14,7 +14,7 @@ public static class StartupExtensions
     {
         services.AddDbContext<BudgetDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetConnectionStringFromSection("Database"));
+            options.UseNpgsql(configuration.GetConnectionStringFromSection());
         });
 
         services.AddMassTransit(x =>
@@ -22,7 +22,7 @@ public static class StartupExtensions
             configureMassTransit?.Invoke(x);
             x.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(configuration.GetRabbitMqConnectionString("MessageBus"));
+                cfg.Host(configuration.GetRabbitMqConnectionString());
                 cfg.ConfigureEndpoints(context);
             });
         });
